@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8000", // adjust baseURL as needed
+  baseURL: "https://construction-site-back.onrender.com", // adjust baseURL as needed
 });
 
 // Add a request interceptor
