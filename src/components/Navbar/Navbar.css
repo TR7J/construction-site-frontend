@@ -1,0 +1,82 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f5f7fa;
+  border-bottom: 1px solid #d1d5da;
+  margin-bottom: 0px;
+  position: fixed;
+  width: 97.2%;
+  z-index: 999;
+}
+
+.navbar-left .brand {
+  font-size: 24px;
+  color: #4a4a4a;
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-right {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container {
+  position: relative;
+}
+.icon-bars {
+  background-color: #333;
+  color: white;
+  padding: 7px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 49.5%;
+}
+
+.link-home {
+  color: #333;
+  font-size: 25px;
+}
+.user-icon {
+  font-size: 24px;
+  color: #4a4a4a;
+}
+
+.brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.link {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 1rem;
+}
+
+.icon-container {
+  position: relative;
+  margin-right: 10px;
+}
+
+/* For medium screens */
+@media screen and (max-width: 510px) {
+  .navbar {
+    width: 92.2%;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .navbar {
+    width: 94.2%;
+  }
+}

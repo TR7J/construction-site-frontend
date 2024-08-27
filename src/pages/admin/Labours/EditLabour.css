@@ -1,0 +1,85 @@
+.edit-labour-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.edit-labour-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-labour-form label {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-labour-form input[type="text"],
+.edit-labour-form input[type="number"],
+.edit-labour-form input[type="date"],
+.edit-labour-form select {
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%; /* Set all input fields to 100% width */
+  box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.edit-labour-form button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-labour-form button:hover {
+  background-color: #0056b3;
+}
+
+.fieldset {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.fieldset legend {
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+.fundi-item,
+.helper-item {
+  margin-bottom: 10px;
+}
+
+.remove-button {
+  color: red;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 14px;
+}
+
+.remove-button:hover {
+  text-decoration: underline;
+}
+
+.add-button {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  background-color: #218838;
+}

@@ -1,0 +1,105 @@
+/* General Container */
+.labour-management {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.labour-management-h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form Styling */
+.labour-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-labour {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.add-button,
+.remove-button {
+  margin-top: 10px;
+  cursor: pointer;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+
+.remove-button {
+  background-color: #dc3545;
+}
+
+.add-button:hover,
+.remove-button:hover {
+  opacity: 0.9;
+}
+
+/* Dynamic Field Groups */
+.fundi-group,
+.helper-group {
+  margin-top: 10px;
+  background-color: #e9ecef;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.fundi-group div,
+.helper-group div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+/* Message */
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  color: #fff;
+  background-color: #28a745;
+  text-align: center;
+  border-radius: 5px;
+}
+
+/* Submit Button */
+.submit-button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}

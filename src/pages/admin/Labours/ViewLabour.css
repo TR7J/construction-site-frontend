@@ -1,0 +1,133 @@
+/* General Container */
+/* .labour-view {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+ */
+.labour-view-h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Filter Styling */
+.filter-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filter-container label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.input-labour {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Table Styling */
+.labour-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.labour-table th,
+.labour-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.labour-table th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.labour-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.labour-table tr:hover {
+  background-color: #ddd;
+}
+
+.labour-table td div {
+  margin-bottom: 5px;
+}
+
+/* Styling for milestone filter */
+.milestone-filter {
+  margin-bottom: 20px;
+}
+
+.milestone-filter label {
+  margin-right: 10px;
+}
+
+.milestone-filter select {
+  padding: 5px;
+}
+
+/* General text styling for headings and paragraphs */
+.view-labour-h1,
+.view-labour-p {
+  text-align: center;
+  margin-top: 0;
+}
+
+/* Link styling */
+.view-labour-link {
+  text-decoration: none;
+}
+
+.labour-info .flex-container {
+  display: flex;
+  justify-content: space-between;
+  width: 105%;
+}
+
+.labour-info .name,
+.labour-info .pay {
+  flex: 1;
+  text-align: center;
+}
+
+/* Action Button Styling */
+.labour-table .action-link {
+  color: #007bff;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.labour-table .action-link:hover {
+  text-decoration: underline;
+}
+
+.labour-table .action-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.labour-table .action-button:hover {
+  background-color: #c82333;
+}
+
+.edit-delete-btns {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
