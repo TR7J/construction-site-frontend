@@ -216,9 +216,17 @@ const AddLabour: React.FC = () => {
           >
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
-            <option value="Wailing">Wailing</option>
+            <option value="Walling">Walling</option>
             <option value="Rinto">Rinto</option>
             <option value="Roofing">Roofing</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical works">Electrical works</option>
+            <option value="Ceiling">Ceiling</option>
+            <option value="Pluster">Pluster</option>
+            <option value="Tiling">Tiling</option>
+            <option value="Fittings">Fittings</option>
+            <option value="Doors">Doors</option>
+            <option value="Windows">Windows</option>
           </select>
         </div>
         <div className="form-group">

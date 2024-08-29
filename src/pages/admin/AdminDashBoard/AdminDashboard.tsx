@@ -106,7 +106,9 @@ const AdminDashboard: React.FC = () => {
       .filter((labour) => labour.milestone === milestone)
       .reduce((acc, labour) => acc + labour.totalPay, 0);
 
-    return { materialCost, labourCost };
+    const combinedCost = materialCost + labourCost;
+
+    return { materialCost, labourCost, combinedCost };
   };
 
   return (
@@ -147,11 +149,12 @@ const AdminDashboard: React.FC = () => {
                 <th>Milestone</th>
                 <th>Total Material Cost (KSH)</th>
                 <th>Total Labour Cost (KSH)</th>
+                <th>Combined Cost (KSH)</th>
               </tr>
             </thead>
             <tbody>
               {milestones.map((milestone) => {
-                const { materialCost, labourCost } =
+                const { materialCost, labourCost, combinedCost } =
                   calculateCostsByMilestone(milestone);
 
                 if (
@@ -166,6 +169,7 @@ const AdminDashboard: React.FC = () => {
                     <td>{milestone}</td>
                     <td>{materialCost.toFixed(2)}</td>
                     <td>{labourCost.toFixed(2)}</td>
+                    <td>{combinedCost.toFixed(2)}</td>
                   </tr>
                 );
               })}
@@ -183,6 +187,19 @@ const AdminDashboard: React.FC = () => {
                   {filteredLabour
                     .reduce((acc, labour) => acc + labour.totalPay, 0)
                     .toFixed(2)}{" "}
+                  KSH
+                </td>
+                <td>
+                  {(
+                    filteredMaterials.reduce(
+                      (acc, material) => acc + material.totalPrice,
+                      0
+                    ) +
+                    filteredLabour.reduce(
+                      (acc, labour) => acc + labour.totalPay,
+                      0
+                    )
+                  ).toFixed(2)}{" "}
                   KSH
                 </td>
               </tr>
@@ -209,6 +226,20 @@ const AdminDashboard: React.FC = () => {
             {filteredLabour
               .reduce((acc, labour) => acc + labour.totalPay, 0)
               .toFixed(2)}{" "}
+            KSH
+          </span>
+          {selectedMilestone !== "All" && ` for ${selectedMilestone}`}
+        </p>
+        <p className="total-cost">
+          Total Combined Cost:{" "}
+          <span className="total-cost-span">
+            {(
+              filteredMaterials.reduce(
+                (acc, material) => acc + material.totalPrice,
+                0
+              ) +
+              filteredLabour.reduce((acc, labour) => acc + labour.totalPay, 0)
+            ).toFixed(2)}{" "}
             KSH
           </span>
           {selectedMilestone !== "All" && ` for ${selectedMilestone}`}
