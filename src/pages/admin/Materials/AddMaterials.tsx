@@ -23,6 +23,7 @@ const AddMaterials: React.FC = () => {
     milestone: "Foundations",
   });
   const [message, setMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // State to track submission
   const navigate = useNavigate();
 
   const handleChange = (
@@ -41,6 +42,11 @@ const AddMaterials: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting) return; // Prevent resubmission if the form is already being submitted
+
+    setIsSubmitting(true); // Set submitting state to true
+
     try {
       // Check if material already exists to update or create a new one
       const existingMaterial = await axios.get(
@@ -74,6 +80,7 @@ const AddMaterials: React.FC = () => {
       setMessage(`Material ${material.name} added successfully!`);
       toast.success(`Material ${material.name} added successfully!`);
     } finally {
+      setIsSubmitting(false); // Reset submitting state to false after submission
       navigate("/supervisor/view-materials");
     }
   };
@@ -150,6 +157,15 @@ const AddMaterials: React.FC = () => {
             <option value="Walling">Walling</option>
             <option value="Rinto">Rinto</option>
             <option value="Roofing">Roofing</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical works">Electrical works</option>
+            <option value="Roofing">Roofing</option>
+            <option value="Ceiling">Ceiling</option>
+            <option value="Pluster">Pluster</option>
+            <option value="Tiling">Tiling</option>
+            <option value="Fittings">Fittings</option>
+            <option value="Doors">Doors</option>
+            <option value="Windows">Windows</option>
           </select>
         </div>
 
@@ -163,8 +179,12 @@ const AddMaterials: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className="submit-button">
-          Submit
+        <button
+          type="submit"
+          className="submit-button"
+          disabled={isSubmitting} // Disable the submit button during submission
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
       {message && <p className="message">{message}</p>}

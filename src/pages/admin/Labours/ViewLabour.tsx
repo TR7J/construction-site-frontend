@@ -65,12 +65,18 @@ const ViewLabour: React.FC = () => {
     }
   };
 
+  // Calculate the total cost of all labours
+  const totalLabourCost = labours.reduce(
+    (acc, labour) => acc + labour.totalPay,
+    0
+  );
+
   const filteredLabours = labours.filter((labour) =>
     filteredMilestone ? labour.milestone === filteredMilestone : true
   );
 
   return (
-    <div>
+    <div className="view-labour-container">
       <h1 className="view-labour-h1">View the available labours</h1>
       <p className="view-labour-p">
         Click
@@ -81,88 +87,98 @@ const ViewLabour: React.FC = () => {
         to add more labour.
       </p>
 
-      <div className="labour-view">
-        <h2 className="labour-view-h2">Labours</h2>
+      <div className="labour-total-cost">
+        <h2 className="labour-total-cost-h2">
+          Total Labour Cost: {totalLabourCost.toFixed(2)} KSH
+        </h2>
+      </div>
 
-        <div className="milestone-filter">
-          <label htmlFor="milestoneFilter">Filter by Milestone</label>
-          <select
-            id="milestoneFilter"
-            value={filteredMilestone}
-            onChange={handleMilestoneFilterChange}
-          >
-            <option value="">All Milestones</option>
-            <option value="Foundations">Foundations</option>
-            <option value="Slab">Slab</option>
-            <option value="Wailing">Wailing</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Roofing">Roofing</option>
-          </select>
-        </div>
-        <div className="table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Milestone</th>
-                <th>Labour Type</th>
-                <th>Main Supervisor</th>
-                <th>Fundis [Name - Pay]</th>
-                <th>Helpers [Name - Pay]</th>
-                <th>Total Pay (KSH)</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLabours.map((labour) => (
-                <tr key={labour._id}>
-                  <td>{labour.date}</td>
-                  <td>{labour.milestone}</td>
-                  <td>{labour.labourType}</td>
-                  <td className="labour-info">
-                    <div className="flex-container">
-                      <span className="name">{labour.mainSupervisor.name}</span>
-                      <span className="pay">
-                        {labour.mainSupervisor.pay} KSH
-                      </span>
+      <div className="milestone-filter">
+        <label htmlFor="milestoneFilter">Filter by Milestone</label>
+        <select
+          id="milestoneFilter"
+          value={filteredMilestone}
+          onChange={handleMilestoneFilterChange}
+        >
+          <option value="">All Milestones</option>
+          <option value="Foundations">Foundations</option>
+          <option value="Slab">Slab</option>
+          <option value="Wailing">Wailing</option>
+          <option value="Rinto">Rinto</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Plumbing">Plumbing</option>
+          <option value="Electrical works">Electrical works</option>
+          <option value="Roofing">Roofing</option>
+          <option value="Ceiling">Ceiling</option>
+          <option value="Pluster">Pluster</option>
+          <option value="Tiling">Tiling</option>
+          <option value="Fittings">Fittings</option>
+          <option value="Doors">Doors</option>
+          <option value="Windows">Windows</option>
+        </select>
+      </div>
+
+      <div className="table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Milestone</th>
+              <th>Labour Type</th>
+              <th>Main Supervisor</th>
+              <th>Fundis [Name - Pay]</th>
+              <th>Helpers [Name - Pay]</th>
+              <th>Total Pay (KSH)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredLabours.map((labour) => (
+              <tr key={labour._id}>
+                <td>{labour.date}</td>
+                <td>{labour.milestone}</td>
+                <td>{labour.labourType}</td>
+                <td className="labour-info">
+                  <div className="flex-container">
+                    <span className="name">{labour.mainSupervisor.name}</span>
+                    <span className="pay">{labour.mainSupervisor.pay} KSH</span>
+                  </div>
+                </td>
+                <td className="labour-info">
+                  {labour.fundis.map((fundi, idx) => (
+                    <div key={idx} className="flex-container">
+                      <span className="name">{fundi.name}</span>
+                      <span className="pay">{fundi.pay} KSH</span>
                     </div>
-                  </td>
-                  <td className="labour-info">
-                    {labour.fundis.map((fundi, idx) => (
-                      <div key={idx} className="flex-container">
-                        <span className="name">{fundi.name}</span>
-                        <span className="pay">{fundi.pay} KSH</span>
-                      </div>
-                    ))}
-                  </td>
-                  <td className="labour-info">
-                    {labour.helpers.map((helper, idx) => (
-                      <div key={idx} className="flex-container">
-                        <span className="name">{helper.name}</span>
-                        <span className="pay">{helper.pay} KSH</span>
-                      </div>
-                    ))}
-                  </td>
-                  <td>{labour.totalPay.toFixed(2)} KSH</td>
-                  <td className="edit-delete-btns">
-                    <button
-                      className="edit-button"
-                      onClick={() => handleEdit(labour._id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(labour._id)}
-                      className="action-button"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  ))}
+                </td>
+                <td className="labour-info">
+                  {labour.helpers.map((helper, idx) => (
+                    <div key={idx} className="flex-container">
+                      <span className="name">{helper.name}</span>
+                      <span className="pay">{helper.pay} KSH</span>
+                    </div>
+                  ))}
+                </td>
+                <td>{labour.totalPay.toFixed(2)} KSH</td>
+                <td className="edit-delete-btns">
+                  <button
+                    className="edit-button"
+                    onClick={() => handleEdit(labour._id)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(labour._id)}
+                    className="action-button"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

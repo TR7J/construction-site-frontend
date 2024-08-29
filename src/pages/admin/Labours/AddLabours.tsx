@@ -39,6 +39,7 @@ const AddLabour: React.FC = () => {
   });
 
   const [message, setMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // State to prevent resubmission
   const navigate = useNavigate();
 
   const handleChange = (
@@ -165,6 +166,11 @@ const AddLabour: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isSubmitting) return; // Prevent resubmission if already submitting
+
+    setIsSubmitting(true);
+
     try {
       await axios.post("/api/supervisor/labour", labour);
       setMessage(
@@ -177,6 +183,8 @@ const AddLabour: React.FC = () => {
     } catch (error: any) {
       setMessage(`Error adding labour: ${error.message}`);
       toast.error(`Error adding labour: ${error.message}`);
+    } finally {
+      setIsSubmitting(false); // Allow resubmission after request is complete
     }
   };
 
@@ -230,6 +238,10 @@ const AddLabour: React.FC = () => {
             <option value="Rinto">Rinto</option>
             <option value="Screeding">Screeding</option>
             <option value="Walling">Walling</option>
+            <option value="Stone dressing">Stone dressing</option>
+            <option value="Vibrator">Vibrator</option>
+            <option value="Compactor">Compactor</option>
+            <option value="Plumbing">Plumbing</option>
           </select>
         </div>
 
@@ -262,7 +274,7 @@ const AddLabour: React.FC = () => {
           <h3>Fundis</h3>
           {labour.fundis.map((fundi, index) => (
             <div key={index} className="fundi-group">
-              <label htmlFor={`fundiName-${index}`}>Name</label>
+              <label htmlFor={`fundiName-${index}`}>Fundi Name</label>
               <input
                 type="text"
                 id={`fundiName-${index}`}
@@ -270,8 +282,9 @@ const AddLabour: React.FC = () => {
                 value={fundi.name}
                 onChange={(e) => handleFundisChange(index, e)}
                 className="input-labour"
+                required
               />
-              <label htmlFor={`fundiPay-${index}`}>Pay (KSH)</label>
+              <label htmlFor={`fundiPay-${index}`}>Fundi Pay (KSH)</label>
               <input
                 type="number"
                 id={`fundiPay-${index}`}
@@ -279,17 +292,22 @@ const AddLabour: React.FC = () => {
                 value={fundi.pay}
                 onChange={(e) => handleFundisChange(index, e)}
                 className="input-labour"
+                required
               />
               <button
                 type="button"
-                className="remove-button"
                 onClick={() => removeFundiField(index)}
+                className="remove-btn"
               >
                 Remove Fundi
               </button>
             </div>
           ))}
-          <button type="button" className="add-button" onClick={addFundiField}>
+          <button
+            type="button"
+            onClick={addFundiField}
+            className="add-more-btn"
+          >
             Add Fundi
           </button>
         </div>
@@ -298,7 +316,7 @@ const AddLabour: React.FC = () => {
           <h3>Helpers</h3>
           {labour.helpers.map((helper, index) => (
             <div key={index} className="helper-group">
-              <label htmlFor={`helperName-${index}`}>Name</label>
+              <label htmlFor={`helperName-${index}`}>Helper Name</label>
               <input
                 type="text"
                 id={`helperName-${index}`}
@@ -306,8 +324,9 @@ const AddLabour: React.FC = () => {
                 value={helper.name}
                 onChange={(e) => handleHelpersChange(index, e)}
                 className="input-labour"
+                required
               />
-              <label htmlFor={`helperPay-${index}`}>Pay (KSH)</label>
+              <label htmlFor={`helperPay-${index}`}>Helper Pay (KSH)</label>
               <input
                 type="number"
                 id={`helperPay-${index}`}
@@ -315,56 +334,44 @@ const AddLabour: React.FC = () => {
                 value={helper.pay}
                 onChange={(e) => handleHelpersChange(index, e)}
                 className="input-labour"
+                required
               />
               <button
                 type="button"
-                className="remove-button"
                 onClick={() => removeHelperField(index)}
+                className="remove-btn"
               >
                 Remove Helper
               </button>
             </div>
           ))}
-          <button type="button" className="add-button" onClick={addHelperField}>
+          <button
+            type="button"
+            onClick={addHelperField}
+            className="add-more-btn"
+          >
             Add Helper
           </button>
         </div>
 
         <div className="form-group">
-          <label>Total Fundis Pay (KSH)</label>
+          <label htmlFor="totalPay">Total Pay (KSH)</label>
           <input
             type="number"
-            value={labour.totalFundisPay}
-            readOnly
-            className="input-labour"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Total Helpers Pay (KSH)</label>
-          <input
-            type="number"
-            value={labour.totalHelpersPay}
-            readOnly
-            className="input-labour"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Total Pay (KSH)</label>
-          <input
-            type="number"
+            id="totalPay"
+            name="totalPay"
             value={labour.totalPay}
             readOnly
             className="input-labour"
           />
         </div>
 
-        <button type="submit" className="submit-button">
-          Add Labour
+        {message && <div className="message">{message}</div>}
+
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
-      {message && <p>{message}</p>}
     </div>
   );
 };

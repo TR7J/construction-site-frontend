@@ -114,6 +114,15 @@ const ViewMaterials: React.FC = () => {
             <option value="Walling">Walling</option>
             <option value="Rinto">Rinto</option>
             <option value="Roofing">Roofing</option>
+            <option value="Plumbing">Plumbing</option>
+            <option value="Electrical works">Electrical works</option>
+            <option value="Roofing">Roofing</option>
+            <option value="Ceiling">Ceiling</option>
+            <option value="Pluster">Pluster</option>
+            <option value="Tiling">Tiling</option>
+            <option value="Fittings">Fittings</option>
+            <option value="Doors">Doors</option>
+            <option value="Windows">Windows</option>
           </select>
         </div>
         <h2 className="view-Materials-h2">Materials</h2>
