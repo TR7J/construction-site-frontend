@@ -48,37 +48,12 @@ const AddMaterials: React.FC = () => {
     setIsSubmitting(true); // Set submitting state to true
 
     try {
-      // Check if material already exists to update or create a new one
-      const existingMaterial = await axios.get(
-        `/api/supervisor/material/${material.name}`
-      );
-      const updatedMaterial = {
-        ...material,
-        quantity: existingMaterial.data.quantity + material.quantity,
-        history: [
-          ...existingMaterial.data.history,
-          {
-            date: new Date().toISOString(),
-            name: material.name,
-            quantity: material.quantity,
-            unitPrice: material.unitPrice,
-            totalPrice: material.totalPrice,
-            unitType: material.unitType,
-            milestone: material.milestone,
-          },
-        ],
-      };
-
-      await axios.put(
-        `/api/supervisor/material/${material.name}`,
-        updatedMaterial
-      );
-      setMessage(`Material ${material.name} updated successfully!`);
-      toast.success(`Material ${material.name} updated successfully!`);
-    } catch (error) {
       await axios.post("/api/supervisor/material", material);
       setMessage(`Material ${material.name} added successfully!`);
       toast.success(`Material ${material.name} added successfully!`);
+    } catch (error: any) {
+      setMessage(`Error while adding material.`);
+      toast.error(`Error adding labour: ${error.message}`);
     } finally {
       setIsSubmitting(false); // Reset submitting state to false after submission
       navigate("/supervisor/view-materials");
@@ -181,7 +156,7 @@ const AddMaterials: React.FC = () => {
 
         <button
           type="submit"
-          className="submit-button"
+          className="submit-btn"
           disabled={isSubmitting} // Disable the submit button during submission
         >
           {isSubmitting ? "Submitting..." : "Submit"}

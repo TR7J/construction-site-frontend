@@ -48,7 +48,7 @@ input[type="number"]:focus {
   outline: none;
 }
 
-.submit-button {
+.submit-btn {
   width: 104.5%;
   padding: 12px;
   font-size: 16px;

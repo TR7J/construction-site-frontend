@@ -66,7 +66,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   if (loading) return <div className="loader">Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
+  /*   if (error) return <div className="error">{error}</div>; */
 
   const milestones = [
     "Foundations",

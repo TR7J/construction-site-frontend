@@ -31,7 +31,7 @@ const FeaturesSection: React.FC = () => {
         <div className="features-grid">
           {features.map((feature, index) => (
             <div key={index} className="card">
-              <img src={feature.icon} alt="Feature" />
+              {/* <img src={feature.icon} alt="Feature" /> */}
               <div className="card-content">
                 <div className="category">{feature.title}</div>
                 <div className="title">{feature.description}</div>
