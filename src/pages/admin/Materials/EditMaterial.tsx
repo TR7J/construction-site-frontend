@@ -14,8 +14,11 @@ const EditMaterial: React.FC = () => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [unitType, setUnitType] = useState<string>("Pieces");
   const [milestone, setMilestone] = useState<string>("Foundations");
+  const [customMilestone, setCustomMilestone] = useState<string>(""); // Custom milestone state
+  const [isCustomMilestone, setIsCustomMilestone] = useState<boolean>(false); // Track if custom milestone is used
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch material details when component loads
   useEffect(() => {
     const fetchMaterial = async () => {
       try {
@@ -27,6 +30,27 @@ const EditMaterial: React.FC = () => {
         setTotalPrice(material.totalPrice);
         setUnitType(material.unitType);
         setMilestone(material.milestone);
+
+        if (
+          ![
+            "Foundations",
+            "Slab",
+            "Walling",
+            "Rinto",
+            "Roofing",
+            "Plumbing",
+            "Electrical works",
+            "Ceiling",
+            "Pluster",
+            "Tiling",
+            "Fittings",
+            "Doors",
+            "Windows",
+          ].includes(material.milestone)
+        ) {
+          setIsCustomMilestone(true);
+          setCustomMilestone(material.milestone);
+        }
       } catch (err) {
         setError("Failed to fetch material details");
         toast.error("Failed to fetch material details");
@@ -36,6 +60,7 @@ const EditMaterial: React.FC = () => {
     fetchMaterial();
   }, [id]);
 
+  // Calculate total price when quantity or unit price changes
   const handleQuantityChange = (value: number) => {
     setQuantity(value);
     setTotalPrice(value * unitPrice);
@@ -46,6 +71,18 @@ const EditMaterial: React.FC = () => {
     setTotalPrice(quantity * value);
   };
 
+  // Handle the milestone selection (predefined or custom)
+  const handleMilestoneChange = (value: string) => {
+    if (value === "Custom") {
+      setIsCustomMilestone(true);
+      setMilestone("");
+    } else {
+      setIsCustomMilestone(false);
+      setMilestone(value);
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -55,11 +92,9 @@ const EditMaterial: React.FC = () => {
         unitPrice,
         totalPrice,
         unitType,
-        milestone, // Include milestone in the update
+        milestone: isCustomMilestone ? customMilestone : milestone,
       });
-      // Display success toast
       toast.success("Material updated successfully!");
-
       navigate("/supervisor/view-materials");
     } catch (err) {
       toast.error("Failed to update material");
@@ -119,8 +154,8 @@ const EditMaterial: React.FC = () => {
         <div className="form-group">
           <label>Milestone</label>
           <select
-            value={milestone}
-            onChange={(e) => setMilestone(e.target.value)}
+            value={isCustomMilestone ? "Custom" : milestone}
+            onChange={(e) => handleMilestoneChange(e.target.value)}
           >
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
@@ -129,16 +164,26 @@ const EditMaterial: React.FC = () => {
             <option value="Roofing">Roofing</option>
             <option value="Plumbing">Plumbing</option>
             <option value="Electrical works">Electrical works</option>
-            <option value="Roofing">Roofing</option>
             <option value="Ceiling">Ceiling</option>
             <option value="Pluster">Pluster</option>
             <option value="Tiling">Tiling</option>
             <option value="Fittings">Fittings</option>
             <option value="Doors">Doors</option>
             <option value="Windows">Windows</option>
+            <option value="Custom">Custom Milestone</option>
           </select>
+          {isCustomMilestone && (
+            <input
+              type="text"
+              value={customMilestone}
+              onChange={(e) => setCustomMilestone(e.target.value)}
+              placeholder="Enter custom milestone"
+              required
+            />
+          )}
         </div>
-        <button type="submit" className="submit-button">
+
+        <button type="submit" className="submit-btn">
           Update Material
         </button>
       </form>

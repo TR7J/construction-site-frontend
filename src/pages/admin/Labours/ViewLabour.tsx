@@ -31,6 +31,24 @@ const ViewLabour: React.FC = () => {
   const [filteredMilestone, setFilteredMilestone] = useState<string>("");
   const navigate = useNavigate();
 
+  // Predefined milestones
+  const predefinedMilestones = [
+    "Foundations",
+    "Slab",
+    "Walling",
+    "Rinto",
+    "Roofing",
+    "Plumbing",
+    "Electrical works",
+    "Roofing",
+    "Ceiling",
+    "Pluster",
+    "Tiling",
+    "Fittings",
+    "Doors",
+    "Windows",
+  ];
+
   useEffect(() => {
     const fetchLabours = async () => {
       try {
@@ -49,6 +67,16 @@ const ViewLabour: React.FC = () => {
   ) => {
     setFilteredMilestone(e.target.value);
   };
+
+  // Extract unique milestones from the materials list
+  const userMilestones = Array.from(
+    new Set(labours.map((labour) => labour.milestone))
+  );
+
+  // Combine predefined and user-added milestones
+  const allMilestones = Array.from(
+    new Set([...predefinedMilestones, ...userMilestones])
+  );
 
   const handleEdit = (id: string) => {
     navigate(`/supervisor/edit-labour/${id}`);
@@ -101,20 +129,11 @@ const ViewLabour: React.FC = () => {
           onChange={handleMilestoneFilterChange}
         >
           <option value="">All Milestones</option>
-          <option value="Foundations">Foundations</option>
-          <option value="Slab">Slab</option>
-          <option value="Wailing">Wailing</option>
-          <option value="Rinto">Rinto</option>
-          <option value="Roofing">Roofing</option>
-          <option value="Plumbing">Plumbing</option>
-          <option value="Electrical works">Electrical works</option>
-          <option value="Roofing">Roofing</option>
-          <option value="Ceiling">Ceiling</option>
-          <option value="Pluster">Pluster</option>
-          <option value="Tiling">Tiling</option>
-          <option value="Fittings">Fittings</option>
-          <option value="Doors">Doors</option>
-          <option value="Windows">Windows</option>
+          {allMilestones.map((milestone, index) => (
+            <option key={index} value={milestone}>
+              {milestone}
+            </option>
+          ))}
         </select>
       </div>
 

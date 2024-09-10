@@ -24,6 +24,8 @@ const AddMaterials: React.FC = () => {
   });
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // State to track submission
+  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle for custom milestone
+  const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
   const navigate = useNavigate();
 
   const handleChange = (
@@ -40,6 +42,12 @@ const AddMaterials: React.FC = () => {
     });
   };
 
+  const handleCustomMilestoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomMilestone(e.target.value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -47,13 +55,19 @@ const AddMaterials: React.FC = () => {
 
     setIsSubmitting(true); // Set submitting state to true
 
+    // If using a custom milestone, set it in the material object
+    const materialToSubmit = {
+      ...material,
+      milestone: useCustomMilestone ? customMilestone : material.milestone,
+    };
+
     try {
-      await axios.post("/api/supervisor/material", material);
+      await axios.post("/api/supervisor/material", materialToSubmit);
       setMessage(`Material ${material.name} added successfully!`);
       toast.success(`Material ${material.name} added successfully!`);
     } catch (error: any) {
       setMessage(`Error while adding material.`);
-      toast.error(`Error adding labour: ${error.message}`);
+      toast.error(`Error adding material: ${error.message}`);
     } finally {
       setIsSubmitting(false); // Reset submitting state to false after submission
       navigate("/supervisor/view-materials");
@@ -118,30 +132,63 @@ const AddMaterials: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="milestone">Milestone</label>
-          <select
-            id="milestone"
-            name="milestone"
-            value={material.milestone}
-            onChange={handleChange}
-            className="input-material"
-            required
-          >
-            <option value="Foundations">Foundations</option>
-            <option value="Slab">Slab</option>
-            <option value="Walling">Walling</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical works">Electrical works</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Ceiling">Ceiling</option>
-            <option value="Pluster">Pluster</option>
-            <option value="Tiling">Tiling</option>
-            <option value="Fittings">Fittings</option>
-            <option value="Doors">Doors</option>
-            <option value="Windows">Windows</option>
-          </select>
+          <label>Milestone</label>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="milestoneOption"
+                checked={!useCustomMilestone}
+                onChange={() => setUseCustomMilestone(false)}
+              />
+              Select from options
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="milestoneOption"
+                checked={useCustomMilestone}
+                onChange={() => setUseCustomMilestone(true)}
+              />
+              Add custom milestone
+            </label>
+          </div>
+
+          {!useCustomMilestone ? (
+            <select
+              id="milestone"
+              name="milestone"
+              value={material.milestone}
+              onChange={handleChange}
+              className="input-material"
+              required
+            >
+              <option value="Foundations">Foundations</option>
+              <option value="Slab">Slab</option>
+              <option value="Walling">Walling</option>
+              <option value="Rinto">Rinto</option>
+              <option value="Roofing">Roofing</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical works">Electrical works</option>
+              <option value="Roofing">Roofing</option>
+              <option value="Ceiling">Ceiling</option>
+              <option value="Pluster">Pluster</option>
+              <option value="Tiling">Tiling</option>
+              <option value="Fittings">Fittings</option>
+              <option value="Doors">Doors</option>
+              <option value="Windows">Windows</option>
+            </select>
+          ) : (
+            <input
+              type="text"
+              id="customMilestone"
+              value={customMilestone}
+              onChange={handleCustomMilestoneChange}
+              className="input-material"
+              placeholder="Enter custom milestone"
+              required={useCustomMilestone}
+            />
+          )}
         </div>
 
         <div className="form-group">

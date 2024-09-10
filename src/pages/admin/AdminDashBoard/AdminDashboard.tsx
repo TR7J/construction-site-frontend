@@ -84,6 +84,14 @@ const AdminDashboard: React.FC = () => {
     "Windows",
   ];
 
+  // Extract unique milestones from the materials list
+  const userMilestones = Array.from(
+    new Set(materials.map((material) => material.milestone))
+  );
+
+  // Combine predefined and user-added milestones
+  const allMilestones = Array.from(new Set([...milestones, ...userMilestones]));
+
   const filteredMaterials =
     selectedMilestone === "All"
       ? materials
@@ -132,8 +140,8 @@ const AdminDashboard: React.FC = () => {
           onChange={handleMilestoneChange}
         >
           <option value="All">All</option>
-          {milestones.map((milestone) => (
-            <option key={milestone} value={milestone}>
+          {allMilestones.map((milestone, index) => (
+            <option key={index} value={milestone}>
               {milestone}
             </option>
           ))}

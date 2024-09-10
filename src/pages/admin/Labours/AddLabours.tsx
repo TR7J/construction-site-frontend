@@ -7,6 +7,7 @@ import "./AddLabour.css";
 interface Labour {
   date: string;
   milestone: string;
+  customMilestone?: string;
   labourType: string;
   mainSupervisor: {
     name: string;
@@ -28,7 +29,7 @@ interface Labour {
 const AddLabour: React.FC = () => {
   const [labour, setLabour] = useState<Labour>({
     date: new Date().toISOString().split("T")[0], // Default to today's date
-    milestone: "Foundations",
+    milestone: "Foundations", // Default to Foundations
     labourType: "Setting up ground",
     mainSupervisor: { name: "", pay: 0 },
     fundis: [{ name: "", pay: 0 }],
@@ -38,8 +39,11 @@ const AddLabour: React.FC = () => {
     totalPay: 0,
   });
 
+  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle for custom milestone
+  const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
+
   const [message, setMessage] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false); // State to prevent resubmission
+  const [isSubmitting, setIsSubmitting] = useState(false); // Prevent resubmission
   const navigate = useNavigate();
 
   const handleChange = (
@@ -49,6 +53,16 @@ const AddLabour: React.FC = () => {
     setLabour((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleCustomMilestoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomMilestone(e.target.value);
+    setLabour((prev) => ({
+      ...prev,
+      milestone: e.target.value, // Update milestone with custom value
     }));
   };
 
@@ -171,13 +185,23 @@ const AddLabour: React.FC = () => {
 
     setIsSubmitting(true);
 
+    // Set the correct milestone based on whether custom milestone is used
+    const labourToSubmit = {
+      ...labour,
+      milestone: useCustomMilestone ? customMilestone : labour.milestone, // Correct milestone value
+    };
+
     try {
-      await axios.post("/api/supervisor/labour", labour);
+      await axios.post("/api/supervisor/labour", labourToSubmit);
       setMessage(
-        `Labour for milestone ${labour.milestone} added successfully!`
+        `Labour for milestone ${
+          useCustomMilestone ? customMilestone : labour.milestone
+        } added successfully!`
       );
       toast.success(
-        `Labour for milestone ${labour.milestone} added successfully!`
+        `Labour for milestone ${
+          useCustomMilestone ? customMilestone : labour.milestone
+        } added successfully!`
       );
       navigate("/supervisor/view-labour");
     } catch (error: any) {
@@ -206,89 +230,107 @@ const AddLabour: React.FC = () => {
         </div>
         <div className="form-group">
           <label htmlFor="milestone">Milestone</label>
-          <select
-            id="milestone"
-            name="milestone"
-            value={labour.milestone}
-            onChange={handleChange}
-            className="input-labour"
-            required
-          >
-            <option value="Foundations">Foundations</option>
-            <option value="Slab">Slab</option>
-            <option value="Wailing">Wailing</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Roofing">Roofing</option>
-          </select>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="milestoneOption"
+                checked={!useCustomMilestone}
+                onChange={() => setUseCustomMilestone(false)}
+              />
+              Select from options
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="milestoneOption"
+                checked={useCustomMilestone}
+                onChange={() => setUseCustomMilestone(true)}
+              />
+              Add custom milestone
+            </label>
+          </div>
+          {!useCustomMilestone ? (
+            <select
+              id="milestone"
+              name="milestone"
+              value={labour.milestone}
+              onChange={handleChange}
+              className="input-labour"
+              required
+            >
+              <option value="Foundations">Foundations</option>
+              <option value="Slab">Slab</option>
+              <option value="Wailing">Wailing</option>
+              <option value="Roofing">Roofing</option>
+            </select>
+          ) : (
+            <input
+              type="text"
+              id="customMilestone"
+              value={customMilestone}
+              onChange={handleCustomMilestoneChange}
+              placeholder="Enter custom milestone"
+              className="input-labour"
+              required
+            />
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="labourType">Labour Type</label>
-          <select
+          <input
+            type="text"
             id="labourType"
             name="labourType"
             value={labour.labourType}
             onChange={handleChange}
             className="input-labour"
             required
-          >
-            <option value="Setting up ground">Setting up ground</option>
-            <option value="Foundation Digging">Foundation Digging</option>
-            <option value="Back Filling">Back Filling</option>
-            <option value="Koroga">Koroga</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Screeding">Screeding</option>
-            <option value="Walling">Walling</option>
-            <option value="Stone dressing">Stone dressing</option>
-            <option value="Vibrator">Vibrator</option>
-            <option value="Compactor">Compactor</option>
-            <option value="Plumbing">Plumbing</option>
-          </select>
+          />
         </div>
-
         <div className="form-group">
-          <label htmlFor="supervisorName">Main Supervisor Name</label>
+          <label htmlFor="mainSupervisor.name">Main Supervisor</label>
           <input
             type="text"
-            id="supervisorName"
+            id="mainSupervisor.name"
             name="name"
             value={labour.mainSupervisor.name}
             onChange={handleSupervisorChange}
+            placeholder="Enter main supervisor name"
             className="input-labour"
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="supervisorPay">Main Supervisor Pay (KSH)</label>
+          <label htmlFor="mainSupervisor.pay">Supervisor Pay</label>
           <input
             type="number"
-            id="supervisorPay"
+            id="mainSupervisor.pay"
             name="pay"
             value={labour.mainSupervisor.pay}
             onChange={handleSupervisorChange}
+            placeholder="Enter supervisor pay"
             className="input-labour"
             required
           />
         </div>
-
         <div className="form-group">
-          <h3>Fundis</h3>
+          <label>Fundis</label>
           {labour.fundis.map((fundi, index) => (
-            <div key={index} className="fundi-group">
-              <label htmlFor={`fundiName-${index}`}>Fundi Name</label>
+            <div key={index} className="fundi-inputs">
               <input
                 type="text"
-                id={`fundiName-${index}`}
                 name="name"
+                placeholder={`Fundi ${index + 1} name`}
                 value={fundi.name}
                 onChange={(e) => handleFundisChange(index, e)}
                 className="input-labour"
                 required
               />
-              <label htmlFor={`fundiPay-${index}`}>Fundi Pay (KSH)</label>
               <input
                 type="number"
-                id={`fundiPay-${index}`}
                 name="pay"
+                placeholder="Pay"
                 value={fundi.pay}
                 onChange={(e) => handleFundisChange(index, e)}
                 className="input-labour"
@@ -297,40 +339,37 @@ const AddLabour: React.FC = () => {
               <button
                 type="button"
                 onClick={() => removeFundiField(index)}
-                className="remove-btn"
+                className="remove-field-btn"
               >
-                Remove Fundi
+                Remove
               </button>
             </div>
           ))}
           <button
             type="button"
             onClick={addFundiField}
-            className="add-more-btn"
+            className="add-field-btn"
           >
             Add Fundi
           </button>
         </div>
-
         <div className="form-group">
-          <h3>Helpers</h3>
+          <label>Helpers</label>
           {labour.helpers.map((helper, index) => (
-            <div key={index} className="helper-group">
-              <label htmlFor={`helperName-${index}`}>Helper Name</label>
+            <div key={index} className="helper-inputs">
               <input
                 type="text"
-                id={`helperName-${index}`}
                 name="name"
+                placeholder={`Helper ${index + 1} name`}
                 value={helper.name}
                 onChange={(e) => handleHelpersChange(index, e)}
                 className="input-labour"
                 required
               />
-              <label htmlFor={`helperPay-${index}`}>Helper Pay (KSH)</label>
               <input
                 type="number"
-                id={`helperPay-${index}`}
                 name="pay"
+                placeholder="Pay"
                 value={helper.pay}
                 onChange={(e) => handleHelpersChange(index, e)}
                 className="input-labour"
@@ -339,38 +378,34 @@ const AddLabour: React.FC = () => {
               <button
                 type="button"
                 onClick={() => removeHelperField(index)}
-                className="remove-btn"
+                className="remove-field-btn"
               >
-                Remove Helper
+                Remove
               </button>
             </div>
           ))}
           <button
             type="button"
             onClick={addHelperField}
-            className="add-more-btn"
+            className="add-field-btn"
           >
             Add Helper
           </button>
         </div>
-
         <div className="form-group">
-          <label htmlFor="totalPay">Total Pay (KSH)</label>
+          <label>Total Pay</label>
           <input
             type="number"
-            id="totalPay"
             name="totalPay"
             value={labour.totalPay}
             readOnly
             className="input-labour"
           />
         </div>
-
-        {message && <div className="message">{message}</div>}
-
         <button type="submit" className="submit-button" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
+        {message && <p className="message">{message}</p>}
       </form>
     </div>
   );

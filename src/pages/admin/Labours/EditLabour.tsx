@@ -31,6 +31,8 @@ const EditLabour: React.FC = () => {
   const navigate = useNavigate();
   const [labour, setLabour] = useState<Labour | null>(null);
   const [formState, setFormState] = useState<Labour | null>(null);
+  const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
+  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle between custom and pre-defined milestone
 
   useEffect(() => {
     const fetchLabour = async () => {
@@ -124,11 +126,28 @@ const EditLabour: React.FC = () => {
     }
   };
 
+  const handleCustomMilestoneToggle = () => {
+    setUseCustomMilestone(!useCustomMilestone);
+    if (useCustomMilestone) {
+      setCustomMilestone("");
+    }
+  };
+
+  const handleCustomMilestoneChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomMilestone(e.target.value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formState) {
       try {
-        await axios.put(`/api/supervisor/labour/${id}`, formState);
+        const updatedLabour = {
+          ...formState,
+          milestone: useCustomMilestone ? customMilestone : formState.milestone,
+        };
+        await axios.put(`/api/supervisor/labour/${id}`, updatedLabour);
         toast.success("Labour details updated successfully.");
         navigate("/supervisor/view-labour");
       } catch (error) {
@@ -191,12 +210,15 @@ const EditLabour: React.FC = () => {
             onChange={(e) => handleInputChange(e)}
           />
         </label>
+
+        {/* Milestone Section */}
         <label>
           Milestone:
           <select
             name="milestone"
             value={formState.milestone}
             onChange={handleSelectChange}
+            disabled={useCustomMilestone} // Disable select if using custom milestone
           >
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
@@ -205,7 +227,6 @@ const EditLabour: React.FC = () => {
             <option value="Roofing">Roofing</option>
             <option value="Plumbing">Plumbing</option>
             <option value="Electrical works">Electrical works</option>
-            <option value="Roofing">Roofing</option>
             <option value="Ceiling">Ceiling</option>
             <option value="Pluster">Pluster</option>
             <option value="Tiling">Tiling</option>
@@ -214,6 +235,29 @@ const EditLabour: React.FC = () => {
             <option value="Windows">Windows</option>
           </select>
         </label>
+
+        {/* Custom Milestone */}
+        <label>
+          Use Custom Milestone:
+          <input
+            type="checkbox"
+            checked={useCustomMilestone}
+            onChange={handleCustomMilestoneToggle}
+          />
+        </label>
+
+        {useCustomMilestone && (
+          <label>
+            Custom Milestone:
+            <input
+              type="text"
+              value={customMilestone}
+              onChange={handleCustomMilestoneChange}
+            />
+          </label>
+        )}
+
+        {/* Labour Type */}
         <label>
           Labour Type:
           <select
@@ -221,6 +265,7 @@ const EditLabour: React.FC = () => {
             value={formState.labourType}
             onChange={handleSelectChange}
           >
+            {/* Populate with the predefined labour types */}
             <option value="Setting up ground">Setting up ground</option>
             <option value="Foundation Digging">Foundation Digging</option>
             <option value="Back Filling">Back Filling</option>
@@ -231,138 +276,99 @@ const EditLabour: React.FC = () => {
             <option value="Slab">Slab</option>
             <option value="Walling">Walling</option>
             <option value="Roofing">Roofing</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical works">Electrical works</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Ceiling">Ceiling</option>
-            <option value="Pluster">Pluster</option>
             <option value="Tiling">Tiling</option>
-            <option value="Fittings">Fittings</option>
-            <option value="Doors">Doors</option>
-            <option value="Windows">Windows</option>
           </select>
         </label>
-        <fieldset className="fieldset">
-          <legend>Main Supervisor</legend>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={formState.mainSupervisor.name}
-              onChange={(e) => handleInputChange(e)}
-            />
-          </label>
-          <label>
-            Pay:
-            <input
-              type="number"
-              name="pay"
-              value={formState.mainSupervisor.pay}
-              onChange={(e) => handleInputChange(e)}
-            />
-          </label>
-        </fieldset>
-        <fieldset className="fieldset">
-          <legend>Fundis</legend>
-          {formState.fundis?.map((fundi, index) => (
-            <div className="fundi-item" key={index}>
-              <label>
-                Name:
-                <input
-                  type="text"
-                  name="name"
-                  value={fundi.name}
-                  onChange={(e) => handleInputChange(e, index, "fundis")}
-                />
-              </label>
-              <label>
-                Pay:
-                <input
-                  type="number"
-                  name="pay"
-                  value={fundi.pay}
-                  onChange={(e) => handleInputChange(e, index, "fundis")}
-                />
-              </label>
-              <button
-                type="button"
-                className="remove-button"
-                onClick={() => removeFundi(index)}
-              >
-                Remove Fundi
-              </button>
-            </div>
-          ))}
-          <button type="button" className="add-button" onClick={addFundi}>
-            Add Fundi
-          </button>
-        </fieldset>
-        <fieldset className="fieldset">
-          <legend>Helpers</legend>
-          {formState.helpers?.map((helper, index) => (
-            <div className="helper-item" key={index}>
-              <label>
-                Name:
-                <input
-                  type="text"
-                  name="name"
-                  value={helper.name}
-                  onChange={(e) => handleInputChange(e, index, "helpers")}
-                />
-              </label>
-              <label>
-                Pay:
-                <input
-                  type="number"
-                  name="pay"
-                  value={helper.pay}
-                  onChange={(e) => handleInputChange(e, index, "helpers")}
-                />
-              </label>
-              <button
-                type="button"
-                className="remove-button"
-                onClick={() => removeHelper(index)}
-              >
-                Remove Helper
-              </button>
-            </div>
-          ))}
-          <button type="button" className="add-button" onClick={addHelper}>
-            Add Helper
-          </button>
-        </fieldset>
+
+        {/* Supervisor */}
+        <h3>Supervisor</h3>
         <label>
-          Total Fundis Pay:
+          Name:
           <input
-            type="number"
-            name="totalFundisPay"
-            value={formState.totalFundisPay}
-            readOnly
+            type="text"
+            name="name"
+            value={formState.mainSupervisor.name}
+            onChange={(e) => handleInputChange(e)}
           />
         </label>
         <label>
-          Total Helpers Pay:
+          Pay:
           <input
             type="number"
-            name="totalHelpersPay"
-            value={formState.totalHelpersPay}
-            readOnly
+            name="pay"
+            value={formState.mainSupervisor.pay}
+            onChange={(e) => handleInputChange(e)}
           />
         </label>
-        <label>
-          Total Pay:
-          <input
-            type="number"
-            name="totalPay"
-            value={formState.totalPay}
-            readOnly
-          />
-        </label>
-        <button type="submit" className="submit-button">
-          Update Labour
+
+        {/* Fundis */}
+        <h3>Fundis</h3>
+        {formState.fundis?.map((fundi, index) => (
+          <div key={index} className="fundi-inputs">
+            <label>
+              Name:
+              <input
+                type="text"
+                name="name"
+                value={fundi.name}
+                onChange={(e) => handleInputChange(e, index, "fundis")}
+              />
+            </label>
+            <label>
+              Pay:
+              <input
+                type="number"
+                name="pay"
+                value={fundi.pay}
+                onChange={(e) => handleInputChange(e, index, "fundis")}
+              />
+            </label>
+            <button type="button" onClick={() => removeFundi(index)}>
+              Remove
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={addFundi}>
+          Add Fundi
         </button>
+
+        {/* Helpers */}
+        <h3>Helpers</h3>
+        {formState.helpers?.map((helper, index) => (
+          <div key={index} className="helper-inputs">
+            <label>
+              Name:
+              <input
+                type="text"
+                name="name"
+                value={helper.name}
+                onChange={(e) => handleInputChange(e, index, "helpers")}
+              />
+            </label>
+            <label>
+              Pay:
+              <input
+                type="number"
+                name="pay"
+                value={helper.pay}
+                onChange={(e) => handleInputChange(e, index, "helpers")}
+              />
+            </label>
+            <button type="button" onClick={() => removeHelper(index)}>
+              Remove
+            </button>
+          </div>
+        ))}
+        <button type="button" onClick={addHelper}>
+          Add Helper
+        </button>
+
+        <h3>Total Payments</h3>
+        <p>Total Fundis Pay: {formState.totalFundisPay}</p>
+        <p>Total Helpers Pay: {formState.totalHelpersPay}</p>
+        <p>Total Pay: {formState.totalPay}</p>
+
+        <button type="submit">Update Labour</button>
       </form>
     </div>
   );

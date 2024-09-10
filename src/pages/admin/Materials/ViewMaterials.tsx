@@ -31,6 +31,24 @@ const ViewMaterials: React.FC = () => {
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
   const navigate = useNavigate();
 
+  // Predefined milestones
+  const predefinedMilestones = [
+    "Foundations",
+    "Slab",
+    "Walling",
+    "Rinto",
+    "Roofing",
+    "Plumbing",
+    "Electrical works",
+    "Roofing",
+    "Ceiling",
+    "Pluster",
+    "Tiling",
+    "Fittings",
+    "Doors",
+    "Windows",
+  ];
+
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -67,6 +85,16 @@ const ViewMaterials: React.FC = () => {
   const handleMilestoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMilestone(e.target.value);
   };
+
+  // Extract unique milestones from the materials list
+  const userMilestones = Array.from(
+    new Set(materials.map((material) => material.milestone))
+  );
+
+  // Combine predefined and user-added milestones
+  const allMilestones = Array.from(
+    new Set([...predefinedMilestones, ...userMilestones])
+  );
 
   // Filter materials based on the selected milestone
   const filteredMaterials =
@@ -109,20 +137,11 @@ const ViewMaterials: React.FC = () => {
             onChange={handleMilestoneChange}
           >
             <option value="All">All</option>
-            <option value="Foundations">Foundations</option>
-            <option value="Slab">Slab</option>
-            <option value="Walling">Walling</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Plumbing">Plumbing</option>
-            <option value="Electrical works">Electrical works</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Ceiling">Ceiling</option>
-            <option value="Pluster">Pluster</option>
-            <option value="Tiling">Tiling</option>
-            <option value="Fittings">Fittings</option>
-            <option value="Doors">Doors</option>
-            <option value="Windows">Windows</option>
+            {allMilestones.map((milestone, index) => (
+              <option key={index} value={milestone}>
+                {milestone}
+              </option>
+            ))}
           </select>
         </div>
         <h2 className="view-Materials-h2">Materials</h2>
