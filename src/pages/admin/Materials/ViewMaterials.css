@@ -77,6 +77,10 @@
 }
 
 /* General text styling for headings and paragraphs */
+.view-materials-h1 {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 .view-materials-h1,
 .view-materials-p {
   text-align: center;
@@ -100,14 +104,14 @@
 }
 
 .edit-button {
-  background-color: #4caf50;
+  background-color: #343a40;
   color: white;
 }
 .edit-delete-btns {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .delete-button {
@@ -167,4 +171,12 @@
 
 .milestone-filter select {
   padding: 5px;
+}
+
+.material-total-cost {
+  padding-top: 10px;
+}
+
+.material-total-cost-h2 {
+  text-align: center;
 }

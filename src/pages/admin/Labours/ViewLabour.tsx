@@ -3,6 +3,7 @@ import axios from "../../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./ViewLabour.css";
+import { useProject } from "../../../context/ProjectContext";
 
 interface Labour {
   _id: string;
@@ -30,6 +31,7 @@ const ViewLabour: React.FC = () => {
   const [labours, setLabours] = useState<Labour[]>([]);
   const [filteredMilestone, setFilteredMilestone] = useState<string>("");
   const navigate = useNavigate();
+  const { projectId } = useProject();
 
   // Predefined milestones
   const predefinedMilestones = [
@@ -51,8 +53,17 @@ const ViewLabour: React.FC = () => {
 
   useEffect(() => {
     const fetchLabours = async () => {
+      if (!projectId)
+        return (
+          <p>
+            Create a new project first. Click{" "}
+            <Link to="/admin/add-projects">here</Link> to create a new project
+          </p>
+        );
       try {
-        const { data } = await axios.get("/api/supervisor/labours");
+        const { data } = await axios.get(
+          `/api/supervisor/labours/${projectId}`
+        );
         setLabours(data);
       } catch (error) {
         toast.error("Error fetching labours.");
@@ -189,7 +200,7 @@ const ViewLabour: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleDelete(labour._id)}
-                    className="action-button"
+                    className="delete-button"
                   >
                     Delete
                   </button>

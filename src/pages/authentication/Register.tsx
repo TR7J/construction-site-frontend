@@ -133,11 +133,11 @@ export default function Register() {
               {/* <option value="admin">Admin</option> */}
             </select>
           </div>
-          <div className="sign-up-button-div">
-            <button type="submit" className="sign-up-button">
-              Register User
-            </button>
-          </div>
+          {/* <div className="sign-up-button-div"> */}
+          <button type="submit" className="sign-up-button">
+            Register User
+          </button>
+          {/* </div> */}
         </form>
       </div>
     </div>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig";
 import "./AdminDashboard.css";
+import { useProject } from "../../../context/ProjectContext";
+import { Link } from "react-router-dom";
 
 interface Material {
   _id: string;
@@ -24,13 +26,21 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
+  const { projectId } = useProject();
 
   useEffect(() => {
     const fetchMaterialsAndLabour = async () => {
+      if (!projectId)
+        return (
+          <p>
+            Create a new project first. Click{" "}
+            <Link to="/admin/add-projects">here</Link> to create a new project
+          </p>
+        );
       try {
         const [materialsResponse, labourResponse] = await Promise.all([
-          axios.get("/api/supervisor/materials"),
-          axios.get("/api/supervisor/labours"),
+          axios.get(`/api/supervisor/materials/${projectId}`),
+          axios.get(`/api/supervisor/labours/${projectId}`),
         ]);
 
         const materialsData = materialsResponse.data;
@@ -59,7 +69,7 @@ const AdminDashboard: React.FC = () => {
     };
 
     fetchMaterialsAndLabour();
-  }, []);
+  }, [projectId]);
 
   const handleMilestoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMilestone(e.target.value);
@@ -127,7 +137,7 @@ const AdminDashboard: React.FC = () => {
           <h2>Total Project Cost: {totalCost.toFixed(2)} KSH</h2>
         </div>
       </div>
-      <p>
+      <p className="admin-dashboard-p">
         Welcome to the admin dashboard. Manage materials, tools, and view
         workers here.
       </p>

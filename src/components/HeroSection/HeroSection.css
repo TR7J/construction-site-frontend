@@ -27,6 +27,7 @@
 .featured-desc {
   color: #aaa;
   font-size: 0.8rem;
+  padding-top: 10px;
 }
 
 .featured-columns-wrapper {
@@ -134,4 +135,8 @@
   .featured-desc {
     font-size: 1rem;
   }
+}
+
+.featured-desc2 {
+  padding-top: 10px;
 }

@@ -9,6 +9,11 @@
   font-size: 1.5em;
 }
 
+.admin-dashboard-p {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 .materials-summary,
 .total-cost {
   margin-top: 20px;

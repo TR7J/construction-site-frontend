@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../../axiosConfig";
-import "./AddMaterials.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useProject } from "../../../context/ProjectContext"; // Import the project context
+import "./AddMaterials.css";
 
 interface Material {
   name: string;
@@ -14,6 +15,7 @@ interface Material {
 }
 
 const AddMaterials: React.FC = () => {
+  const { projectId } = useProject(); // Get projectId from context
   const [material, setMaterial] = useState<Material>({
     name: "",
     quantity: 0,
@@ -22,24 +24,29 @@ const AddMaterials: React.FC = () => {
     unitType: "Pieces",
     milestone: "Foundations",
   });
+  const [customMilestone, setCustomMilestone] = useState<string>("");
+  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // State to track submission
-  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle for custom milestone
-  const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (material.quantity && material.unitPrice) {
+      setMaterial((prev) => ({
+        ...prev,
+        totalPrice: prev.quantity * prev.unitPrice,
+      }));
+    }
+  }, [material.quantity, material.unitPrice]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setMaterial((prev) => {
-      const updatedMaterial = { ...prev, [name]: value };
-      if (name === "quantity" || name === "unitPrice") {
-        updatedMaterial.totalPrice =
-          updatedMaterial.quantity * updatedMaterial.unitPrice;
-      }
-      return updatedMaterial;
-    });
+    setMaterial((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleCustomMilestoneChange = (
@@ -51,26 +58,33 @@ const AddMaterials: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isSubmitting) return; // Prevent resubmission if the form is already being submitted
+    if (isSubmitting) return;
 
-    setIsSubmitting(true); // Set submitting state to true
+    if (!projectId) {
+      toast.error("Project ID is missing");
+      return;
+    }
 
-    // If using a custom milestone, set it in the material object
+    setIsSubmitting(true);
+
     const materialToSubmit = {
       ...material,
       milestone: useCustomMilestone ? customMilestone : material.milestone,
     };
 
     try {
-      await axios.post("/api/supervisor/material", materialToSubmit);
+      await axios.post(
+        `/api/supervisor/material/${projectId}`,
+        materialToSubmit
+      );
       setMessage(`Material ${material.name} added successfully!`);
       toast.success(`Material ${material.name} added successfully!`);
+      navigate("/supervisor/view-materials");
     } catch (error: any) {
       setMessage(`Error while adding material.`);
       toast.error(`Error adding material: ${error.message}`);
     } finally {
-      setIsSubmitting(false); // Reset submitting state to false after submission
-      navigate("/supervisor/view-materials");
+      setIsSubmitting(false);
     }
   };
 
@@ -90,6 +104,7 @@ const AddMaterials: React.FC = () => {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="quantity">Quantity</label>
           <input
@@ -102,6 +117,7 @@ const AddMaterials: React.FC = () => {
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="unitPrice">Unit Price</label>
           <input
@@ -111,9 +127,11 @@ const AddMaterials: React.FC = () => {
             value={material.unitPrice}
             onChange={handleChange}
             className="input-material"
+            step="0.01"
             required
           />
         </div>
+
         <div className="form-group">
           <label htmlFor="unitType">Unit Type</label>
           <select
@@ -128,6 +146,7 @@ const AddMaterials: React.FC = () => {
             <option value="Lorries">Lorries</option>
             <option value="Bags">Bags</option>
             <option value="Feet">Feet</option>
+            <option value="KGs">KGs</option>
           </select>
         </div>
 
@@ -170,9 +189,8 @@ const AddMaterials: React.FC = () => {
               <option value="Roofing">Roofing</option>
               <option value="Plumbing">Plumbing</option>
               <option value="Electrical works">Electrical works</option>
-              <option value="Roofing">Roofing</option>
               <option value="Ceiling">Ceiling</option>
-              <option value="Pluster">Pluster</option>
+              <option value="Plaster">Plaster</option>
               <option value="Tiling">Tiling</option>
               <option value="Fittings">Fittings</option>
               <option value="Doors">Doors</option>
@@ -201,15 +219,11 @@ const AddMaterials: React.FC = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          className="submit-btn"
-          disabled={isSubmitting} // Disable the submit button during submission
-        >
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
+        {message && <p className="message">{message}</p>}
       </form>
-      {message && <p className="message">{message}</p>}
     </div>
   );
 };

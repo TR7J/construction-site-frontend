@@ -28,6 +28,10 @@ import EditMaterial from "./pages/admin/Materials/EditMaterial";
 import AddLabour from "./pages/admin/Labours/AddLabours";
 import ViewLabour from "./pages/admin/Labours/ViewLabour";
 import EditLabour from "./pages/admin/Labours/EditLabour";
+import { ProjectProvider } from "./context/ProjectContext";
+import ProjectsPage from "./pages/admin/Projects/ProjectsPage";
+import AddProject from "./pages/admin/Projects/AddProject";
+import EditProjectPage from "./pages/admin/Projects/EditProjectsPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +59,12 @@ const router = createBrowserRouter(
       <Route element={<AdminRoute />}>
         <Route path="/admin/dashboard" element={<AdminDashBoard />} />
         <Route path="/admin/register" element={<Register />} />
+        <Route path="/admin/projects" element={<ProjectsPage />} />
+        <Route path="/admin/add-projects" element={<AddProject />} />
+        <Route
+          path="/admin/edit-project/:project-id"
+          element={<EditProjectPage />}
+        />
         {/* <Route path="admin/manage-tools" element={<ManageTools />} /> */}
       </Route>
     </Route>
@@ -64,9 +74,11 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <StoreProvider>
-      <HelmetProvider>
-        <RouterProvider router={router} />
-      </HelmetProvider>
+      <ProjectProvider>
+        <HelmetProvider>
+          <RouterProvider router={router} />
+        </HelmetProvider>
+      </ProjectProvider>
     </StoreProvider>
   </React.StrictMode>
 );

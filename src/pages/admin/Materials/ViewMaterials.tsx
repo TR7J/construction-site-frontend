@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
-import "./ViewMaterials.css";
 import { toast } from "react-toastify";
+import { useProject } from "../../../context/ProjectContext"; // Adjust path as needed
+import "./ViewMaterials.css";
 
 interface MaterialHistory {
   date: string;
@@ -25,6 +26,7 @@ interface Material {
 }
 
 const ViewMaterials: React.FC = () => {
+  const { projectId } = useProject();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +42,6 @@ const ViewMaterials: React.FC = () => {
     "Roofing",
     "Plumbing",
     "Electrical works",
-    "Roofing",
     "Ceiling",
     "Pluster",
     "Tiling",
@@ -51,8 +52,18 @@ const ViewMaterials: React.FC = () => {
 
   useEffect(() => {
     const fetchMaterials = async () => {
+      if (!projectId)
+        return (
+          <p>
+            Create a new project first. Click{" "}
+            <Link to="/admin/add-projects">here</Link> to create a new project
+          </p>
+        );
+
       try {
-        const response = await axios.get("/api/supervisor/materials");
+        const response = await axios.get(
+          `/api/supervisor/materials/${projectId}`
+        );
         setMaterials(response.data);
       } catch (err) {
         toast.error("Failed to fetch materials.");
@@ -63,7 +74,7 @@ const ViewMaterials: React.FC = () => {
     };
 
     fetchMaterials();
-  }, []);
+  }, [projectId]);
 
   const handleEdit = (id: string) => {
     navigate(`/supervisor/edit-material/${id}`);
@@ -86,17 +97,13 @@ const ViewMaterials: React.FC = () => {
     setSelectedMilestone(e.target.value);
   };
 
-  // Extract unique milestones from the materials list
   const userMilestones = Array.from(
     new Set(materials.map((material) => material.milestone))
   );
-
-  // Combine predefined and user-added milestones
   const allMilestones = Array.from(
     new Set([...predefinedMilestones, ...userMilestones])
   );
 
-  // Filter materials based on the selected milestone
   const filteredMaterials =
     selectedMilestone === "All"
       ? materials
@@ -104,12 +111,17 @@ const ViewMaterials: React.FC = () => {
           (material) => material.milestone === selectedMilestone
         );
 
-  // Filter history based on the selected milestone
   const filteredHistory = materials.flatMap((material) =>
     material.history.filter(
       (entry) =>
         selectedMilestone === "All" || entry.milestone === selectedMilestone
     )
+  );
+
+  // Calculate the total cost of all materials
+  const totalMaterialCost = filteredMaterials.reduce(
+    (acc, material) => acc + material.unitPrice * material.quantity,
+    0
   );
 
   if (loading) return <div className="loader">Loading...</div>;
@@ -127,7 +139,11 @@ const ViewMaterials: React.FC = () => {
         to add more materials.
       </p>
 
-      {/* Materials Table */}
+      <div className="material-total-cost">
+        <h2 className="material-total-cost-h2">
+          Total Material Cost: {totalMaterialCost.toFixed(2)} KSH
+        </h2>
+      </div>
       <div className="material-list-container">
         <div className="milestone-filter">
           <label htmlFor="milestoneFilter">Filter by Milestone:</label>
@@ -188,7 +204,6 @@ const ViewMaterials: React.FC = () => {
         </div>
       </div>
 
-      {/* Material History Table */}
       <div className="material-history-container">
         <h2>Material History</h2>
         <div className="table-container">

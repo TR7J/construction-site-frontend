@@ -16,12 +16,16 @@ header {
   padding-bottom: 60px;
 }
 
+main {
+  padding-left: 27px;
+}
+
 .container {
-  padding-left: 17%;
+  padding-left: 18%;
 }
 
 .large-container {
-  padding-left: 5%;
+  padding-left: 6%;
 }
 
 /* For small screens */

@@ -78,6 +78,9 @@
 }
 
 /* General text styling for headings and paragraphs */
+.view-labour-h1 {
+  padding: 20px;
+}
 .view-labour-h1,
 .view-labour-p {
   text-align: center;
@@ -128,8 +131,12 @@
 .edit-delete-btns {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+}
+
+.labour-total-cost {
+  padding-top: 10px;
 }
 
 .labour-total-cost-h2 {

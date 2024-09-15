@@ -3,6 +3,7 @@ import axios from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AddLabour.css";
+import { useProject } from "../../../context/ProjectContext";
 
 interface Labour {
   date: string;
@@ -41,10 +42,10 @@ const AddLabour: React.FC = () => {
 
   const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle for custom milestone
   const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
-
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent resubmission
   const navigate = useNavigate();
+  const { projectId } = useProject();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -75,6 +76,14 @@ const AddLabour: React.FC = () => {
         [name]: value,
       },
       totalPay: Number(value) + prev.totalFundisPay + prev.totalHelpersPay,
+    }));
+  };
+
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setLabour((prev) => ({
+      ...prev,
+      [name]: value,
     }));
   };
 
@@ -192,7 +201,7 @@ const AddLabour: React.FC = () => {
     };
 
     try {
-      await axios.post("/api/supervisor/labour", labourToSubmit);
+      await axios.post(`/api/supervisor/labour/${projectId}`, labourToSubmit);
       setMessage(
         `Labour for milestone ${
           useCustomMilestone ? customMilestone : labour.milestone
@@ -262,7 +271,16 @@ const AddLabour: React.FC = () => {
               <option value="Foundations">Foundations</option>
               <option value="Slab">Slab</option>
               <option value="Wailing">Wailing</option>
+              <option value="Rinto">Rinto</option>
               <option value="Roofing">Roofing</option>
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical works">Electrical works</option>
+              <option value="Ceiling">Ceiling</option>
+              <option value="Pluster">Pluster</option>
+              <option value="Tiling">Tiling</option>
+              <option value="Fittings">Fittings</option>
+              <option value="Doors">Doors</option>
+              <option value="Windows">Windows</option>
             </select>
           ) : (
             <input
@@ -276,18 +294,30 @@ const AddLabour: React.FC = () => {
             />
           )}
         </div>
-        <div className="form-group">
-          <label htmlFor="labourType">Labour Type</label>
-          <input
-            type="text"
-            id="labourType"
+        {/* Labour Type */}
+        <label>
+          Labour Type:
+          <select
             name="labourType"
             value={labour.labourType}
-            onChange={handleChange}
+            onChange={handleSelectChange}
             className="input-labour"
-            required
-          />
-        </div>
+          >
+            {/* Populate with the predefined labour types */}
+            <option value="Setting up ground">Setting up ground</option>
+            <option value="Foundation Digging">Foundation Digging</option>
+            <option value="Back Filling">Back Filling</option>
+            <option value="Koroga">Koroga</option>
+            <option value="Rinto">Rinto</option>
+            <option value="Screeding">Screeding</option>
+            <option value="Foundations">Foundations</option>
+            <option value="Slab">Slab</option>
+            <option value="Walling">Walling</option>
+            <option value="Roofing">Roofing</option>
+            <option value="Tiling">Tiling</option>
+          </select>
+        </label>
+
         <div className="form-group">
           <label htmlFor="mainSupervisor.name">Main Supervisor</label>
           <input
