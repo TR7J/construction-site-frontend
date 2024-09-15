@@ -26,7 +26,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
-  const { projectId } = useProject();
+  const { projectId, projectName } = useProject();
 
   useEffect(() => {
     const fetchMaterialsAndLabour = async () => {
@@ -132,9 +132,11 @@ const AdminDashboard: React.FC = () => {
   return (
     <div className="admin-dashboard">
       <div className="admin-dashboard-cost">
-        <h1>Admin Dashboard</h1>
+        <h1>Dashboard</h1>
         <div className="total-project-cost">
-          <h2>Total Project Cost: {totalCost.toFixed(2)} KSH</h2>
+          <h2>
+            {projectName} Cost: {totalCost.toFixed(2)} KSH
+          </h2>
         </div>
       </div>
       <p className="admin-dashboard-p">
