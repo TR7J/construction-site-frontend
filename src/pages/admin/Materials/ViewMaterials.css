@@ -90,6 +90,7 @@
 /* Link styling */
 .view-materials-link {
   text-decoration: none;
+  color: red;
 }
 
 /* Button styling for edit and delete actions */

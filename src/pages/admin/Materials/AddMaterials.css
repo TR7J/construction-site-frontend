@@ -49,11 +49,11 @@ input[type="number"]:focus {
 }
 
 .submit-btn {
-  width: 104.5%;
+  width: 100%;
   padding: 12px;
   font-size: 16px;
   color: #fff;
-  background-color: #007bff;
+  background-color: #1f2937;
   border: none;
   border-radius: 5px;
   cursor: pointer;
