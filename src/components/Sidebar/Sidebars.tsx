@@ -112,9 +112,9 @@ const Sidebars: React.FC<SidebarProps> = ({ sidebar, setSidebar }) => {
           <li>
             <Link to="/supervisor/view-labour">
               <i className="bx bx-group"></i>
-              <span className="link_name">Labours</span>
+              <span className="link_name">Labour</span>
             </Link>
-            <span className="tooltip">Labours</span>
+            <span className="tooltip">Labour</span>
           </li>
         )}
 

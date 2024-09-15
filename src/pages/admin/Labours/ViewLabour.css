@@ -90,6 +90,7 @@
 /* Link styling */
 .view-labour-link {
   text-decoration: none;
+  color: red;
 }
 
 .labour-info .flex-container {

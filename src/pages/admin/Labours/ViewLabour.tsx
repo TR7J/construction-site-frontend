@@ -116,7 +116,7 @@ const ViewLabour: React.FC = () => {
 
   return (
     <div className="view-labour-container">
-      <h1 className="view-labour-h1">View the available labours</h1>
+      <h1 className="view-labour-h1">View the available labour</h1>
       <p className="view-labour-p">
         Click
         <Link to={"/supervisor/add-labour"} className="view-labour-link">
