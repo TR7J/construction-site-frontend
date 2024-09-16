@@ -74,7 +74,13 @@ const AdminDashboard: React.FC = () => {
   const handleMilestoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMilestone(e.target.value);
   };
-
+  if (!projectId)
+    return (
+      <p>
+        Create a new project first. Click{" "}
+        <Link to="/admin/add-projects">here</Link> to create a new project
+      </p>
+    );
   if (loading) return <div className="loader">Loading...</div>;
   /*   if (error) return <div className="error">{error}</div>; */
 
