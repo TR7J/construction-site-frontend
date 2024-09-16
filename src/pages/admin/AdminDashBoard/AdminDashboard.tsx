@@ -32,10 +32,13 @@ const AdminDashboard: React.FC = () => {
     const fetchMaterialsAndLabour = async () => {
       if (!projectId)
         return (
-          <p>
-            Create a new project first. Click{" "}
-            <Link to="/admin/add-projects">here</Link> to create a new project
-          </p>
+          <div>
+            <h1>Dashboard</h1>
+            <p>
+              Create a new project first. Click{" "}
+              <Link to="/admin/add-projects">here</Link> to create a new project
+            </p>
+          </div>
         );
       try {
         const [materialsResponse, labourResponse] = await Promise.all([
@@ -76,10 +79,13 @@ const AdminDashboard: React.FC = () => {
   };
   if (!projectId)
     return (
-      <p>
-        Create a new project first. Click{" "}
-        <Link to="/admin/add-projects">here</Link> to create a new project
-      </p>
+      <div>
+        <h1>Dashboard</h1>
+        <p>
+          Create a new project first. Click{" "}
+          <Link to="/admin/add-projects">here</Link> to create a new project
+        </p>
+      </div>
     );
   if (loading) return <div className="loader">Loading...</div>;
   /*   if (error) return <div className="error">{error}</div>; */
