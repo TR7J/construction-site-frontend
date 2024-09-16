@@ -82,7 +82,7 @@ const AdminDashboard: React.FC = () => {
       <div>
         <h1>Dashboard</h1>
         <p>
-          Create a new project first. Click{" "}
+          Select an existing project first or Click{" "}
           <Link to="/admin/add-projects">here</Link> to create a new project
         </p>
       </div>
