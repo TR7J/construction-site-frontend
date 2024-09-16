@@ -143,3 +143,9 @@
 .labour-total-cost-h2 {
   text-align: center;
 }
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

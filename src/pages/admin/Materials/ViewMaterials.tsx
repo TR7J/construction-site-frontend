@@ -24,13 +24,13 @@ interface Material {
   milestone: string;
   history: MaterialHistory[];
 }
-
 const ViewMaterials: React.FC = () => {
   const { projectId } = useProject();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
+  const [selectedMaterial, setSelectedMaterial] = useState<string>("All");
   const navigate = useNavigate();
 
   // Predefined milestones
@@ -97,6 +97,10 @@ const ViewMaterials: React.FC = () => {
     setSelectedMilestone(e.target.value);
   };
 
+  const handleMaterialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedMaterial(e.target.value);
+  };
+
   const userMilestones = Array.from(
     new Set(materials.map((material) => material.milestone))
   );
@@ -104,21 +108,29 @@ const ViewMaterials: React.FC = () => {
     new Set([...predefinedMilestones, ...userMilestones])
   );
 
-  const filteredMaterials =
-    selectedMilestone === "All"
-      ? materials
-      : materials.filter(
-          (material) => material.milestone === selectedMilestone
-        );
+  const userMaterials = Array.from(
+    new Set(materials.map((material) => material.name))
+  );
+
+  // Filter materials based on both milestone and material name
+  const filteredMaterials = materials.filter((material) => {
+    const milestoneMatch =
+      selectedMilestone === "All" || material.milestone === selectedMilestone;
+    const materialMatch =
+      selectedMaterial === "All" || material.name === selectedMaterial;
+    return milestoneMatch && materialMatch;
+  });
 
   const filteredHistory = materials.flatMap((material) =>
     material.history.filter(
       (entry) =>
-        selectedMilestone === "All" || entry.milestone === selectedMilestone
+        (selectedMilestone === "All" ||
+          entry.milestone === selectedMilestone) &&
+        (selectedMaterial === "All" || entry.name === selectedMaterial)
     )
   );
 
-  // Calculate the total cost of all materials
+  // Calculate the total cost of all filtered materials
   const totalMaterialCost = filteredMaterials.reduce(
     (acc, material) => acc + material.unitPrice * material.quantity,
     0
@@ -144,23 +156,43 @@ const ViewMaterials: React.FC = () => {
           Total Material Cost: {totalMaterialCost.toFixed(2)} KSH
         </h2>
       </div>
-      <div className="material-list-container">
-        <div className="milestone-filter">
-          <label htmlFor="milestoneFilter">Filter by Milestone:</label>
-          <select
-            id="milestoneFilter"
-            value={selectedMilestone}
-            onChange={handleMilestoneChange}
-          >
-            <option value="All">All</option>
-            {allMilestones.map((milestone, index) => (
-              <option key={index} value={milestone}>
-                {milestone}
-              </option>
-            ))}
-          </select>
+      <div>
+        <div className="material-list-container">
+          <div className="material-filters">
+            <div className="milestone-filter">
+              <label htmlFor="milestoneFilter">Filter by Milestone:</label>
+              <select
+                id="milestoneFilter"
+                value={selectedMilestone}
+                onChange={handleMilestoneChange}
+              >
+                <option value="All">All</option>
+                {allMilestones.map((milestone, index) => (
+                  <option key={index} value={milestone}>
+                    {milestone}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="milestone-filter">
+              <label htmlFor="materialFilter">Filter by Material:</label>
+              <select
+                id="materialFilter"
+                value={selectedMaterial}
+                onChange={handleMaterialChange}
+              >
+                <option value="All">All</option>
+                {userMaterials.map((material, index) => (
+                  <option key={index} value={material}>
+                    {material}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
-        <h2 className="view-Materials-h2">Materials</h2>
+        <h2 className="view-materials-h2">Materials</h2>
         <div className="table-container">
           <table className="table">
             <thead>

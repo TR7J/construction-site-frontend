@@ -28,7 +28,7 @@ export default function Register() {
       return;
     }
     try {
-      const { data } = await axios.post("/api/auth/createSupervisor", {
+      const { data } = await axios.post("/api/auth/register", {
         name,
         email,
         password,
@@ -130,7 +130,7 @@ export default function Register() {
               className="sign-up-input-select"
             >
               <option value="supervisor">Supervisor</option>
-              {/* <option value="admin">Admin</option> */}
+              <option value="admin">Admin</option>
             </select>
           </div>
           {/* <div className="sign-up-button-div"> */}

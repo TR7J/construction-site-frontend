@@ -30,10 +30,10 @@ interface Labour {
 const ViewLabour: React.FC = () => {
   const [labours, setLabours] = useState<Labour[]>([]);
   const [filteredMilestone, setFilteredMilestone] = useState<string>("");
+  const [filteredLabourType, setFilteredLabourType] = useState<string>("");
   const navigate = useNavigate();
   const { projectId } = useProject();
 
-  // Predefined milestones
   const predefinedMilestones = [
     "Foundations",
     "Slab",
@@ -79,12 +79,16 @@ const ViewLabour: React.FC = () => {
     setFilteredMilestone(e.target.value);
   };
 
-  // Extract unique milestones from the materials list
+  const handleLabourTypeFilterChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setFilteredLabourType(e.target.value);
+  };
+
   const userMilestones = Array.from(
     new Set(labours.map((labour) => labour.milestone))
   );
 
-  // Combine predefined and user-added milestones
   const allMilestones = Array.from(
     new Set([...predefinedMilestones, ...userMilestones])
   );
@@ -104,14 +108,15 @@ const ViewLabour: React.FC = () => {
     }
   };
 
-  // Calculate the total cost of all labours
   const totalLabourCost = labours.reduce(
     (acc, labour) => acc + labour.totalPay,
     0
   );
 
-  const filteredLabours = labours.filter((labour) =>
-    filteredMilestone ? labour.milestone === filteredMilestone : true
+  const filteredLabours = labours.filter(
+    (labour) =>
+      (filteredMilestone ? labour.milestone === filteredMilestone : true) &&
+      (filteredLabourType ? labour.labourType === filteredLabourType : true)
   );
 
   return (
@@ -132,20 +137,40 @@ const ViewLabour: React.FC = () => {
         </h2>
       </div>
 
-      <div className="milestone-filter">
-        <label htmlFor="milestoneFilter">Filter by Milestone</label>
-        <select
-          id="milestoneFilter"
-          value={filteredMilestone}
-          onChange={handleMilestoneFilterChange}
-        >
-          <option value="">All Milestones</option>
-          {allMilestones.map((milestone, index) => (
-            <option key={index} value={milestone}>
-              {milestone}
-            </option>
-          ))}
-        </select>
+      <div className="filters">
+        <div className="milestone-filter">
+          <label htmlFor="milestoneFilter">Filter by Milestone</label>
+          <select
+            id="milestoneFilter"
+            value={filteredMilestone}
+            onChange={handleMilestoneFilterChange}
+          >
+            <option value="">All Milestones</option>
+            {allMilestones.map((milestone, index) => (
+              <option key={index} value={milestone}>
+                {milestone}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="milestone-filter">
+          <label htmlFor="labourTypeFilter">Filter by Labour Type</label>
+          <select
+            id="labourTypeFilter"
+            value={filteredLabourType}
+            onChange={handleLabourTypeFilterChange}
+          >
+            <option value="">All Labour Types</option>
+            {Array.from(
+              new Set(labours.map((labour) => labour.labourType))
+            ).map((labourType, index) => (
+              <option key={index} value={labourType}>
+                {labourType}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="table-container">

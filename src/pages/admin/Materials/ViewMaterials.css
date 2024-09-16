@@ -181,3 +181,9 @@
 .material-total-cost-h2 {
   text-align: center;
 }
+
+.material-filters {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
