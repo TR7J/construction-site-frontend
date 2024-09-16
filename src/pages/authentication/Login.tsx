@@ -94,11 +94,11 @@ const Login: React.FC = () => {
               ></i>
             </span>
           </div>
-          <div className="sign-up-button-div">
-            <button type="submit" className="sign-up-button" disabled={loading}>
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </div>
+          {/*  <div className="sign-up-button-div"> */}
+          <button type="submit" className="sign-up-button" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          {/*          </div> */}
           {error && <div className="error-message">{error}</div>}
         </form>
       </div>
