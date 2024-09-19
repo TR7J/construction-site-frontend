@@ -24,6 +24,7 @@ interface Material {
   milestone: string;
   history: MaterialHistory[];
 }
+
 const ViewMaterials: React.FC = () => {
   const { projectId } = useProject();
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -108,16 +109,23 @@ const ViewMaterials: React.FC = () => {
     new Set([...predefinedMilestones, ...userMilestones])
   );
 
+  // Remove duplicates and spaces by using trim and lowercase for case insensitivity
   const userMaterials = Array.from(
-    new Set(materials.map((material) => material.name))
+    new Set(materials.map((material) => material.name.trim().toLowerCase()))
   );
 
   // Filter materials based on both milestone and material name
   const filteredMaterials = materials.filter((material) => {
     const milestoneMatch =
       selectedMilestone === "All" || material.milestone === selectedMilestone;
+
     const materialMatch =
-      selectedMaterial === "All" || material.name === selectedMaterial;
+      selectedMaterial === "All" ||
+      material.name
+        .trim()
+        .toLowerCase()
+        .includes(selectedMaterial.toLowerCase());
+
     return milestoneMatch && materialMatch;
   });
 
@@ -126,7 +134,11 @@ const ViewMaterials: React.FC = () => {
       (entry) =>
         (selectedMilestone === "All" ||
           entry.milestone === selectedMilestone) &&
-        (selectedMaterial === "All" || entry.name === selectedMaterial)
+        (selectedMaterial === "All" ||
+          entry.name
+            .trim()
+            .toLowerCase()
+            .includes(selectedMaterial.toLowerCase()))
     )
   );
 
@@ -160,7 +172,9 @@ const ViewMaterials: React.FC = () => {
         <div className="material-list-container">
           <div className="material-filters">
             <div className="milestone-filter">
-              <label htmlFor="milestoneFilter">Filter by Milestone:</label>
+              <label htmlFor="milestoneFilter" className="filter-milestone">
+                Filter by Milestone:
+              </label>
               <select
                 id="milestoneFilter"
                 value={selectedMilestone}
@@ -185,7 +199,7 @@ const ViewMaterials: React.FC = () => {
                 <option value="All">All</option>
                 {userMaterials.map((material, index) => (
                   <option key={index} value={material}>
-                    {material}
+                    {material.charAt(0).toUpperCase() + material.slice(1)}
                   </option>
                 ))}
               </select>

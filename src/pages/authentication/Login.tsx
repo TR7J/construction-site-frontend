@@ -64,7 +64,7 @@ const Login: React.FC = () => {
           <title>Sign In</title>
         </Helmet>
 
-        <form onSubmit={handleLogin} className="sign-in-form">
+        <form onSubmit={handleLogin}>
           <div className="sign-up-group">
             <input
               className="sign-up-input"
@@ -99,9 +99,10 @@ const Login: React.FC = () => {
             {loading ? "Logging in..." : "Login"}
           </button>
           {/*          </div> */}
-          {error && <div className="error-message">{error}</div>}
         </form>
       </div>
+
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };
