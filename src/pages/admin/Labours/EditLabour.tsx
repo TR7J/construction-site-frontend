@@ -222,7 +222,7 @@ const EditLabour: React.FC = () => {
           >
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
-            <option value="Wailing">Wailing</option>
+            <option value="Walling">Walling</option>
             <option value="Rinto">Rinto</option>
             <option value="Roofing">Roofing</option>
             <option value="Plumbing">Plumbing</option>
