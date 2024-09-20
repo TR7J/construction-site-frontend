@@ -3,6 +3,7 @@ import axios from "../../../axiosConfig";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AddMaterials.css";
+import { format } from "date-fns";
 
 const EditMaterial: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,6 +18,7 @@ const EditMaterial: React.FC = () => {
   const [customMilestone, setCustomMilestone] = useState<string>(""); // Custom milestone state
   const [isCustomMilestone, setIsCustomMilestone] = useState<boolean>(false); // Track if custom milestone is used
   const [error, setError] = useState<string | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string>("");
 
   // Fetch material details when component loads
   useEffect(() => {
@@ -30,6 +32,9 @@ const EditMaterial: React.FC = () => {
         setTotalPrice(material.totalPrice);
         setUnitType(material.unitType);
         setMilestone(material.milestone);
+        setUpdatedAt(
+          material.updatedAt ? format(new Date(material.updatedAt), "PPP") : ""
+        );
 
         if (
           ![
@@ -93,6 +98,7 @@ const EditMaterial: React.FC = () => {
         totalPrice,
         unitType,
         milestone: isCustomMilestone ? customMilestone : milestone,
+        updatedAt: new Date(), // Update date when submitting
       });
       toast.success("Material updated successfully!");
       navigate("/supervisor/view-materials");
@@ -187,6 +193,7 @@ const EditMaterial: React.FC = () => {
           Update Material
         </button>
       </form>
+      {updatedAt && <p>Last updated on: {updatedAt}</p>}
     </div>
   );
 };

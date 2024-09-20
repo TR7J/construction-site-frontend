@@ -42,6 +42,9 @@ const AddLabour: React.FC = () => {
 
   const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle for custom milestone
   const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
+  const [useCustomLabourType, setUseCustomLabourType] =
+    useState<boolean>(false); // Toggle for custom labour type
+  const [customLabourType, setCustomLabourType] = useState<string>(""); // State for custom labour type
   const [message, setMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent resubmission
   const navigate = useNavigate();
@@ -64,6 +67,16 @@ const AddLabour: React.FC = () => {
     setLabour((prev) => ({
       ...prev,
       milestone: e.target.value, // Update milestone with custom value
+    }));
+  };
+
+  const handleCustomLabourTypeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomLabourType(e.target.value);
+    setLabour((prev) => ({
+      ...prev,
+      labourType: e.target.value,
     }));
   };
 
@@ -270,7 +283,7 @@ const AddLabour: React.FC = () => {
             >
               <option value="Foundations">Foundations</option>
               <option value="Slab">Slab</option>
-              <option value="Walling">Walling</option>
+              <option value="Walling">Waling</option>
               <option value="Rinto">Rinto</option>
               <option value="Roofing">Roofing</option>
               <option value="Plumbing">Plumbing</option>
@@ -294,7 +307,7 @@ const AddLabour: React.FC = () => {
             />
           )}
         </div>
-        {/* Labour Type */}
+        {/*         {/* Labour Type 
         <label>
           Labour Type:
           <select
@@ -303,7 +316,7 @@ const AddLabour: React.FC = () => {
             onChange={handleSelectChange}
             className="input-labour"
           >
-            {/* Populate with the predefined labour types */}
+            {/* Populate with the predefined labour types 
             <option value="Setting up ground">Setting up ground</option>
             <option value="Foundation Digging">Foundation Digging</option>
             <option value="Back Filling">Back Filling</option>
@@ -316,7 +329,62 @@ const AddLabour: React.FC = () => {
             <option value="Roofing">Roofing</option>
             <option value="Tiling">Tiling</option>
           </select>
-        </label>
+        </label> */}
+
+        {/* Labour Type Section */}
+        <div className="form-group">
+          <label htmlFor="labourType">Labour Type</label>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="labourTypeOption"
+                checked={!useCustomLabourType}
+                onChange={() => setUseCustomLabourType(false)}
+              />
+              Select from options
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="labourTypeOption"
+                checked={useCustomLabourType}
+                onChange={() => setUseCustomLabourType(true)}
+              />
+              Enter custom labour type
+            </label>
+          </div>
+          {!useCustomLabourType ? (
+            <select
+              id="labourType"
+              name="labourType"
+              value={labour.labourType}
+              onChange={handleSelectChange}
+              className="input-labour"
+            >
+              <option value="Setting up ground">Setting up ground</option>
+              <option value="Foundation Digging">Foundation Digging</option>
+              <option value="Back Filling">Back Filling</option>
+              <option value="Koroga">Koroga</option>
+              <option value="Rinto">Rinto</option>
+              <option value="Screeding">Screeding</option>
+              <option value="Foundations">Foundations</option>
+              <option value="Slab">Slab</option>
+              <option value="Walling">Walling</option>
+              <option value="Roofing">Roofing</option>
+              <option value="Tiling">Tiling</option>
+            </select>
+          ) : (
+            <input
+              type="text"
+              id="customLabourType"
+              value={customLabourType}
+              onChange={handleCustomLabourTypeChange}
+              className="input-labour"
+              placeholder="Enter custom labour type"
+            />
+          )}
+        </div>
 
         <div className="form-group">
           <label htmlFor="mainSupervisor.name">Main Supervisor</label>

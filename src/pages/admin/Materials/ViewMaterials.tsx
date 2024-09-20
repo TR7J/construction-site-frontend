@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { format } from "date-fns"; // Importing date-fns
 import { useProject } from "../../../context/ProjectContext"; // Adjust path as needed
 import "./ViewMaterials.css";
 
@@ -17,6 +18,7 @@ interface MaterialHistory {
 
 interface Material {
   _id: string;
+  date: string;
   name: string;
   quantity: number;
   unitPrice: number;
@@ -34,7 +36,6 @@ const ViewMaterials: React.FC = () => {
   const [selectedMaterial, setSelectedMaterial] = useState<string>("All");
   const navigate = useNavigate();
 
-  // Predefined milestones
   const predefinedMilestones = [
     "Foundations",
     "Slab",
@@ -109,12 +110,10 @@ const ViewMaterials: React.FC = () => {
     new Set([...predefinedMilestones, ...userMilestones])
   );
 
-  // Remove duplicates and spaces by using trim and lowercase for case insensitivity
   const userMaterials = Array.from(
     new Set(materials.map((material) => material.name.trim().toLowerCase()))
   );
 
-  // Filter materials based on both milestone and material name
   const filteredMaterials = materials.filter((material) => {
     const milestoneMatch =
       selectedMilestone === "All" || material.milestone === selectedMilestone;
@@ -142,7 +141,6 @@ const ViewMaterials: React.FC = () => {
     )
   );
 
-  // Calculate the total cost of all filtered materials
   const totalMaterialCost = filteredMaterials.reduce(
     (acc, material) => acc + material.unitPrice * material.quantity,
     0
@@ -168,6 +166,7 @@ const ViewMaterials: React.FC = () => {
           Total Material Cost: {totalMaterialCost.toFixed(2)} KSH
         </h2>
       </div>
+
       <div>
         <div className="material-list-container">
           <div className="material-filters">
@@ -206,11 +205,13 @@ const ViewMaterials: React.FC = () => {
             </div>
           </div>
         </div>
+
         <h2 className="view-materials-h2">Materials</h2>
         <div className="table-container">
           <table className="table">
             <thead>
               <tr>
+                <th>Date</th>
                 <th>Name</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
@@ -223,6 +224,8 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
+                  <td>{format(new Date(material.date), "PPP")}</td>{" "}
+                  {/* Formatting date */}
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitPrice.toFixed(2)}</td>
@@ -268,7 +271,8 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredHistory.map((entry, index) => (
                 <tr key={`${entry.name}-${index}`}>
-                  <td>{new Date(entry.date).toLocaleDateString()}</td>
+                  <td>{format(new Date(entry.date), "PPP")}</td>{" "}
+                  {/* Formatting date */}
                   <td>{entry.name}</td>
                   <td>{entry.quantity}</td>
                   <td>{entry.unitPrice.toFixed(2)}</td>

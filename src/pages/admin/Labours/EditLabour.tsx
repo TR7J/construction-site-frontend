@@ -31,8 +31,11 @@ const EditLabour: React.FC = () => {
   const navigate = useNavigate();
   const [labour, setLabour] = useState<Labour | null>(null);
   const [formState, setFormState] = useState<Labour | null>(null);
-  const [customMilestone, setCustomMilestone] = useState<string>(""); // State for custom milestone
-  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false); // Toggle between custom and pre-defined milestone
+  const [customMilestone, setCustomMilestone] = useState<string>("");
+  const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false);
+  const [customLabourType, setCustomLabourType] = useState<string>(""); // State for custom labour type
+  const [useCustomLabourType, setUseCustomLabourType] =
+    useState<boolean>(false); // Toggle for custom labour type
 
   useEffect(() => {
     const fetchLabour = async () => {
@@ -139,6 +142,19 @@ const EditLabour: React.FC = () => {
     setCustomMilestone(e.target.value);
   };
 
+  const handleCustomLabourTypeToggle = () => {
+    setUseCustomLabourType(!useCustomLabourType);
+    if (useCustomLabourType) {
+      setCustomLabourType("");
+    }
+  };
+
+  const handleCustomLabourTypeChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setCustomLabourType(e.target.value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formState) {
@@ -146,6 +162,9 @@ const EditLabour: React.FC = () => {
         const updatedLabour = {
           ...formState,
           milestone: useCustomMilestone ? customMilestone : formState.milestone,
+          labourType: useCustomLabourType
+            ? customLabourType
+            : formState.labourType, // use custom labour type if selected
         };
         await axios.put(`/api/supervisor/labour/${id}`, updatedLabour);
         toast.success("Labour details updated successfully.");
@@ -218,7 +237,7 @@ const EditLabour: React.FC = () => {
             name="milestone"
             value={formState.milestone}
             onChange={handleSelectChange}
-            disabled={useCustomMilestone} // Disable select if using custom milestone
+            disabled={useCustomMilestone}
           >
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
@@ -236,7 +255,6 @@ const EditLabour: React.FC = () => {
           </select>
         </label>
 
-        {/* Custom Milestone */}
         <label>
           Use Custom Milestone:
           <input
@@ -264,24 +282,36 @@ const EditLabour: React.FC = () => {
             name="labourType"
             value={formState.labourType}
             onChange={handleSelectChange}
+            disabled={useCustomLabourType}
           >
-            {/* Populate with the predefined labour types */}
             <option value="Setting up ground">Setting up ground</option>
-            <option value="Foundation Digging">Foundation Digging</option>
-            <option value="Back Filling">Back Filling</option>
-            <option value="Koroga">Koroga</option>
-            <option value="Rinto">Rinto</option>
-            <option value="Screeding">Screeding</option>
-            <option value="Foundations">Foundations</option>
-            <option value="Slab">Slab</option>
-            <option value="Walling">Walling</option>
-            <option value="Roofing">Roofing</option>
-            <option value="Tiling">Tiling</option>
+            <option value="Pouring cement">Pouring cement</option>
+            <option value="Laying bricks">Laying bricks</option>
           </select>
         </label>
 
-        {/* Supervisor */}
-        <h3>Supervisor</h3>
+        <label>
+          Use Custom Labour Type:
+          <input
+            type="checkbox"
+            checked={useCustomLabourType}
+            onChange={handleCustomLabourTypeToggle}
+          />
+        </label>
+
+        {useCustomLabourType && (
+          <label>
+            Custom Labour Type:
+            <input
+              type="text"
+              value={customLabourType}
+              onChange={handleCustomLabourTypeChange}
+            />
+          </label>
+        )}
+
+        {/* Main Supervisor */}
+        <h3>Main Supervisor</h3>
         <label>
           Name:
           <input
@@ -303,8 +333,8 @@ const EditLabour: React.FC = () => {
 
         {/* Fundis */}
         <h3>Fundis</h3>
-        {formState.fundis?.map((fundi, index) => (
-          <div key={index} className="fundi-inputs">
+        {formState.fundis.map((fundi, index) => (
+          <div key={index}>
             <label>
               Name:
               <input
@@ -324,7 +354,7 @@ const EditLabour: React.FC = () => {
               />
             </label>
             <button type="button" onClick={() => removeFundi(index)}>
-              Remove
+              Remove Fundi
             </button>
           </div>
         ))}
@@ -334,8 +364,8 @@ const EditLabour: React.FC = () => {
 
         {/* Helpers */}
         <h3>Helpers</h3>
-        {formState.helpers?.map((helper, index) => (
-          <div key={index} className="helper-inputs">
+        {formState.helpers.map((helper, index) => (
+          <div key={index}>
             <label>
               Name:
               <input
@@ -355,7 +385,7 @@ const EditLabour: React.FC = () => {
               />
             </label>
             <button type="button" onClick={() => removeHelper(index)}>
-              Remove
+              Remove Helper
             </button>
           </div>
         ))}
@@ -363,11 +393,13 @@ const EditLabour: React.FC = () => {
           Add Helper
         </button>
 
-        <h3>Total Payments</h3>
+        {/* Totals */}
+        <h3>Totals</h3>
         <p>Total Fundis Pay: {formState.totalFundisPay}</p>
         <p>Total Helpers Pay: {formState.totalHelpersPay}</p>
         <p>Total Pay: {formState.totalPay}</p>
 
+        {/* Submit */}
         <button type="submit">Update Labour</button>
       </form>
     </div>

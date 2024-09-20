@@ -12,6 +12,7 @@ interface Material {
   totalPrice: number;
   unitType: string;
   milestone: string;
+  dateAdded: string; // New dateAdded field
 }
 
 const AddMaterials: React.FC = () => {
@@ -23,6 +24,7 @@ const AddMaterials: React.FC = () => {
     totalPrice: 0,
     unitType: "Pieces",
     milestone: "Foundations",
+    dateAdded: "", // Initialize dateAdded
   });
   const [customMilestone, setCustomMilestone] = useState<string>("");
   const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false);
@@ -30,6 +32,7 @@ const AddMaterials: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Calculate total price whenever quantity or unit price changes
   useEffect(() => {
     if (material.quantity && material.unitPrice) {
       setMaterial((prev) => ({
@@ -39,6 +42,7 @@ const AddMaterials: React.FC = () => {
     }
   }, [material.quantity, material.unitPrice]);
 
+  // Handle form field changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -49,12 +53,14 @@ const AddMaterials: React.FC = () => {
     }));
   };
 
+  // Handle custom milestone input change
   const handleCustomMilestoneChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setCustomMilestone(e.target.value);
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -207,6 +213,20 @@ const AddMaterials: React.FC = () => {
               required={useCustomMilestone}
             />
           )}
+        </div>
+
+        {/* Date Added Field */}
+        <div className="form-group">
+          <label htmlFor="dateAdded">Date Added</label>
+          <input
+            type="date"
+            id="dateAdded"
+            name="dateAdded"
+            value={material.dateAdded}
+            onChange={handleChange}
+            className="input-material"
+            required
+          />
         </div>
 
         <div className="form-group">
