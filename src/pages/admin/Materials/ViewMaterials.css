@@ -170,9 +170,16 @@
   justify-content: flex-start;
   align-items: center;
   overflow-x: auto;
-  padding: 10px;
 }
 
 .filter-milestone {
   white-space: nowrap;
+}
+
+.viewmaterials {
+  padding: 10px;
+}
+
+.view-materials-h2 {
+  margin-top: 10px;
 }

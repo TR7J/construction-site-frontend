@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "../../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./ViewLabour.css";
 import { useProject } from "../../../context/ProjectContext";
+import * as XLSX from "xlsx"; // Import XLSX for Excel export
 
 interface Labour {
   _id: string;
@@ -33,6 +34,7 @@ const ViewLabour: React.FC = () => {
   const [filteredLabourType, setFilteredLabourType] = useState<string>("");
   const navigate = useNavigate();
   const { projectId } = useProject();
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   const predefinedMilestones = [
     "Foundations",
@@ -108,19 +110,60 @@ const ViewLabour: React.FC = () => {
     }
   };
 
-  const totalLabourCost = labours.reduce(
-    (acc, labour) => acc + labour.totalPay,
-    0
-  );
-
   const filteredLabours = labours.filter(
     (labour) =>
       (filteredMilestone ? labour.milestone === filteredMilestone : true) &&
       (filteredLabourType ? labour.labourType === filteredLabourType : true)
   );
 
+  const totalLabourCost = filteredLabours.reduce(
+    (acc, labour) => acc + labour.totalPay,
+    0
+  );
+
+  // Function to handle export of filtered labour data to Excel
+  const handleExport = () => {
+    // Calculate total cost of filtered labours
+    const totalFilteredCost = filteredLabours.reduce(
+      (acc, labour) => acc + labour.totalPay,
+      0
+    );
+
+    // Prepare data for export
+    const exportData = filteredLabours.map((labour) => ({
+      Date: labour.date,
+      Milestone: labour.milestone,
+      "Labour Type": labour.labourType,
+      "Main Supervisor": `${labour.mainSupervisor.name} - ${labour.mainSupervisor.pay} KSH`,
+      "Total Pay (KSH)": labour.totalPay.toFixed(2),
+      Fundis: labour.fundis
+        .map((fundi) => `${fundi.name} - ${fundi.pay} KSH`)
+        .join(", "),
+      Helpers: labour.helpers
+        .map((helper) => `${helper.name} - ${helper.pay} KSH`)
+        .join(", "),
+    }));
+
+    // Add a total cost row at the end
+    exportData.push({
+      Date: "",
+      Milestone: "Total Cost",
+      "Labour Type": "",
+      "Main Supervisor": "",
+      "Total Pay (KSH)": totalFilteredCost.toFixed(2),
+      Fundis: "",
+      Helpers: "",
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Labour");
+
+    XLSX.writeFile(workbook, "Labour_Report.xlsx");
+  };
+
   return (
-    <div className="view-labour-container">
+    <div className="view-labour-container" ref={dashboardRef}>
       <h1 className="view-labour-h1">View the available labour</h1>
       <p className="view-labour-p">
         Click
@@ -144,6 +187,7 @@ const ViewLabour: React.FC = () => {
             id="milestoneFilter"
             value={filteredMilestone}
             onChange={handleMilestoneFilterChange}
+            style={{ width: "140px" }}
           >
             <option value="">All Milestones</option>
             {allMilestones.map((milestone, index) => (
@@ -160,6 +204,7 @@ const ViewLabour: React.FC = () => {
             id="labourTypeFilter"
             value={filteredLabourType}
             onChange={handleLabourTypeFilterChange}
+            style={{ width: "140px" }}
           >
             <option value="">All Labour Types</option>
             {Array.from(
@@ -171,6 +216,13 @@ const ViewLabour: React.FC = () => {
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="export-button-container">
+        <label>Export to: </label>
+        <button className="excel-export-button" onClick={handleExport}>
+          <i className="fas fa-file-excel"></i> Excel
+        </button>
       </div>
 
       <div className="table-container">

@@ -40,17 +40,21 @@ header {
   .large-container {
     padding-left: 10%;
   }
+
+  .container {
+    padding-left: 12%;
+  }
 }
 
 @media screen and (min-width: 800px) and (max-width: 999px) {
   .container {
-    padding-left: 29%;
+    padding-left: 10%;
   }
 }
 
 @media screen and (min-width: 1000px) and (max-width: 1199px) {
   .container {
-    padding-left: 23%;
+    padding-left: 12%;
   }
 }
 
@@ -129,4 +133,27 @@ header {
 
 .td-any {
   white-space: nowrap;
+}
+
+.excel-export-button {
+  background-color: #217346; /* Excel green color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.excel-export-button i {
+  font-size: 20px;
+}
+
+.excel-export-button:hover {
+  background-color: #1d5c3a; /* Darker green on hover */
 }

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "../../../axiosConfig";
 import "./AdminDashboard.css";
 import { useProject } from "../../../context/ProjectContext";
 import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
 
 interface Material {
   _id: string;
@@ -27,6 +28,7 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
   const { projectId, projectName } = useProject();
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMaterialsAndLabour = async () => {
@@ -77,6 +79,62 @@ const AdminDashboard: React.FC = () => {
   const handleMilestoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMilestone(e.target.value);
   };
+
+  // Export to Excel functionality
+  const exportToExcel = () => {
+    // Prepare the data that is displayed in the "Costs Summary by Milestone" table
+    const exportData: Array<{
+      Milestone: string;
+      "Total Material Cost (KSH)": string;
+      "Total Labour Cost (KSH)": string;
+      "Combined Cost (KSH)": string;
+    }> = [];
+
+    milestones.forEach((milestone) => {
+      if (selectedMilestone !== "All" && milestone !== selectedMilestone) {
+        return;
+      }
+
+      const { materialCost, labourCost, combinedCost } =
+        calculateCostsByMilestone(milestone);
+
+      exportData.push({
+        Milestone: milestone,
+        "Total Material Cost (KSH)": materialCost.toFixed(2),
+        "Total Labour Cost (KSH)": labourCost.toFixed(2),
+        "Combined Cost (KSH)": combinedCost.toFixed(2),
+      });
+    });
+
+    // Add totals to the export data
+    const totalMaterialCost = filteredMaterials.reduce(
+      (acc, material) => acc + material.totalPrice,
+      0
+    );
+
+    const totalLabourCost = filteredLabour.reduce(
+      (acc, labour) => acc + labour.totalPay,
+      0
+    );
+
+    const totalCombinedCost = totalMaterialCost + totalLabourCost;
+
+    exportData.push({
+      Milestone: "Total",
+      "Total Material Cost (KSH)": totalMaterialCost.toFixed(2),
+      "Total Labour Cost (KSH)": totalLabourCost.toFixed(2),
+      "Combined Cost (KSH)": totalCombinedCost.toFixed(2),
+    });
+
+    // Create worksheet and workbook
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Costs Summary");
+
+    // Export the workbook
+    XLSX.writeFile(workbook, `${projectName}_Costs_Summary.xlsx`);
+  };
+
   if (!projectId)
     return (
       <div>
@@ -142,7 +200,7 @@ const AdminDashboard: React.FC = () => {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard" ref={dashboardRef}>
       <div className="admin-dashboard-cost">
         <h1>Dashboard</h1>
         <div className="total-project-cost">
@@ -170,6 +228,13 @@ const AdminDashboard: React.FC = () => {
             </option>
           ))}
         </select>
+      </div>
+
+      <div className="dashboard-export-buttons">
+        <label>Export to: </label>
+        <button className="excel-export-button" onClick={exportToExcel}>
+          <i className="fas fa-file-excel"></i> Excel
+        </button>
       </div>
 
       <div className="costs-summary">

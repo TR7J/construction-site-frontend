@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../axiosConfig";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { format } from "date-fns"; // Importing date-fns
-import { useProject } from "../../../context/ProjectContext"; // Adjust path as needed
+import { format } from "date-fns";
+import { useProject } from "../../../context/ProjectContext";
+import * as XLSX from "xlsx"; // Importing XLSX for export to Excel
 import "./ViewMaterials.css";
 
 interface MaterialHistory {
@@ -146,11 +147,48 @@ const ViewMaterials: React.FC = () => {
     0
   );
 
+  // Function to handle export of filtered data to Excel
+  const handleExport = () => {
+    // Calculate total cost of filtered materials
+    const totalFilteredCost = filteredMaterials.reduce(
+      (acc, material) => acc + material.unitPrice * material.quantity,
+      0
+    );
+
+    // Prepare data for export
+    const exportData = filteredMaterials.map((material) => ({
+      Date: format(new Date(material.date), "PPP"),
+      Name: material.name,
+      Quantity: material.quantity,
+      "Unit Price": material.unitPrice.toFixed(2),
+      "Total Price": (material.unitPrice * material.quantity).toFixed(2),
+      "Unit Type": material.unitType,
+      Milestone: material.milestone,
+    }));
+
+    // Add a total cost row at the end
+    exportData.push({
+      Date: "",
+      Name: "Total Cost",
+      Quantity: 0,
+      "Unit Price": "",
+      "Total Price": totalFilteredCost.toFixed(2),
+      "Unit Type": "",
+      Milestone: "",
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Materials");
+
+    XLSX.writeFile(workbook, "Materials_Report.xlsx");
+  };
+
   if (loading) return <div className="loader">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div>
+    <div className="viewmaterials">
       <h1 className="view-materials-h1">View your available materials</h1>
       <p className="view-materials-p">
         Click
@@ -178,6 +216,7 @@ const ViewMaterials: React.FC = () => {
                 id="milestoneFilter"
                 value={selectedMilestone}
                 onChange={handleMilestoneChange}
+                style={{ width: "140px" }}
               >
                 <option value="All">All</option>
                 {allMilestones.map((milestone, index) => (
@@ -194,6 +233,7 @@ const ViewMaterials: React.FC = () => {
                 id="materialFilter"
                 value={selectedMaterial}
                 onChange={handleMaterialChange}
+                style={{ width: "140px" }}
               >
                 <option value="All">All</option>
                 {userMaterials.map((material, index) => (
@@ -206,6 +246,12 @@ const ViewMaterials: React.FC = () => {
           </div>
         </div>
 
+        <div className="export-button-container">
+          <label>Export to: </label>
+          <button className="excel-export-button" onClick={handleExport}>
+            <i className="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
         <h2 className="view-materials-h2">Materials</h2>
         <div className="table-container">
           <table className="table">
@@ -225,7 +271,6 @@ const ViewMaterials: React.FC = () => {
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
                   <td>{format(new Date(material.date), "PPP")}</td>{" "}
-                  {/* Formatting date */}
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitPrice.toFixed(2)}</td>
@@ -270,9 +315,8 @@ const ViewMaterials: React.FC = () => {
             </thead>
             <tbody>
               {filteredHistory.map((entry, index) => (
-                <tr key={`${entry.name}-${index}`}>
-                  <td>{format(new Date(entry.date), "PPP")}</td>{" "}
-                  {/* Formatting date */}
+                <tr key={index}>
+                  <td>{format(new Date(entry.date), "PPP")}</td>
                   <td>{entry.name}</td>
                   <td>{entry.quantity}</td>
                   <td>{entry.unitPrice.toFixed(2)}</td>
