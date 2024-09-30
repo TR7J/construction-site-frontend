@@ -44,19 +44,6 @@
   font-weight: bold;
 }
 
-/* Styling for milestone filter */
-.milestone-filter {
-  margin-bottom: 20px;
-}
-
-.milestone-filter label {
-  margin-right: 10px;
-}
-
-.milestone-filter select {
-  padding: 5px;
-}
-
 .total-project-cost {
   top: 10px;
   right: 10px;
@@ -74,6 +61,41 @@
   align-items: center;
 }
 
+.milestone-filter label {
+  white-space: nowrap;
+}
+
+.project-filter {
+  margin-right: 10px;
+}
+
+.project-filters {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-x: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+select {
+  padding: 5.5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  /* box-sizing: border-box; */
+}
+
+.exporting-options {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.dashboard-export-buttons {
+  margin-right: 10px;
+}
 @media screen and(max-width: 375px) {
   .admin-dashboard-cost {
     display: flex;

@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import "./ViewLabour.css";
 import { useProject } from "../../../context/ProjectContext";
 import * as XLSX from "xlsx"; // Import XLSX for Excel export
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { format } from "date-fns";
 
 interface Labour {
   _id: string;
@@ -29,11 +32,12 @@ interface Labour {
 }
 
 const ViewLabour: React.FC = () => {
+  const [projects, setProjects] = useState<any[]>([]);
+  const { projectId, setProjectId, setProjectName } = useProject();
   const [labours, setLabours] = useState<Labour[]>([]);
   const [filteredMilestone, setFilteredMilestone] = useState<string>("");
   const [filteredLabourType, setFilteredLabourType] = useState<string>("");
   const navigate = useNavigate();
-  const { projectId } = useProject();
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   const predefinedMilestones = [
@@ -52,6 +56,20 @@ const ViewLabour: React.FC = () => {
     "Doors",
     "Windows",
   ];
+
+  useEffect(() => {
+    // Fetch projects to populate the dropdown
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("/api/projects");
+        setProjects(response.data);
+      } catch (error) {
+        console.error("Error fetching projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     const fetchLabours = async () => {
@@ -73,7 +91,7 @@ const ViewLabour: React.FC = () => {
       }
     };
     fetchLabours();
-  }, []);
+  }, [projectId]);
 
   const handleMilestoneFilterChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -85,6 +103,16 @@ const ViewLabour: React.FC = () => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     setFilteredLabourType(e.target.value);
+  };
+
+  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProject = projects.find(
+      (project) => project._id === e.target.value
+    );
+    if (selectedProject) {
+      setProjectId(selectedProject._id);
+      setProjectName(selectedProject.name);
+    }
   };
 
   const userMilestones = Array.from(
@@ -162,6 +190,49 @@ const ViewLabour: React.FC = () => {
     XLSX.writeFile(workbook, "Labour_Report.xlsx");
   };
 
+  // Function to handle export of filtered labour data to PDF
+  const handlePDFExport = () => {
+    const doc = new jsPDF();
+
+    // Define the table headers
+    doc.autoTable({
+      head: [
+        [
+          "Date",
+          "Milestone",
+          "Labour Type",
+          "Main Supervisor",
+          "Fundis [Name - Pay]",
+          "Helpers [Name - Pay]",
+          "Total Pay (KSH)",
+        ],
+      ],
+      body: filteredLabours.map((labour) => [
+        format(new Date(labour.date), "yyyy-MM-dd"),
+        labour.milestone,
+        labour.labourType,
+        `${labour.mainSupervisor.name} - ${labour.mainSupervisor.pay} KSH`,
+        labour.fundis
+          .map((fundi) => `${fundi.name} - ${fundi.pay} KSH`)
+          .join(", "),
+        labour.helpers
+          .map((helper) => `${helper.name} - ${helper.pay} KSH`)
+          .join(", "),
+        labour.totalPay.toFixed(2),
+      ]),
+    });
+
+    // Add the total cost text below the table
+    doc.text(
+      `Total Labour Cost: ${totalLabourCost.toFixed(2)} KSH`,
+      14,
+      doc.lastAutoTable.finalY + 10 // Adjust as necessary
+    );
+
+    // Save the PDF
+    doc.save("Labour_Report.pdf");
+  };
+
   return (
     <div className="view-labour-container" ref={dashboardRef}>
       <h1 className="view-labour-h1">View the available labour</h1>
@@ -216,13 +287,38 @@ const ViewLabour: React.FC = () => {
             ))}
           </select>
         </div>
-      </div>
 
-      <div className="export-button-container">
-        <label>Export to: </label>
-        <button className="excel-export-button" onClick={handleExport}>
-          <i className="fas fa-file-excel"></i> Excel
-        </button>
+        <div className="project-filter">
+          <label htmlFor="projectFilter">Select Project:</label>
+          <select
+            id="projectFilter"
+            onChange={handleProjectChange}
+            /* style={{ width: "140px" }} */
+          >
+            <option value="">Select a Project</option>
+            {projects.map((project) => (
+              <option key={project._id} value={project._id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="exporting-options">
+        <div className="export-button-container">
+          <label>Export to: </label>
+          <button className="excel-export-button" onClick={handleExport}>
+            <i className="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+
+        <div className="export-button-container">
+          <label>Export to: </label>
+          <button onClick={handlePDFExport} className="pdf-button">
+            <i className="fas fa-file-pdf" style={{ marginRight: "8px" }}></i>
+            PDF
+          </button>
+        </div>
       </div>
 
       <div className="table-container">

@@ -66,15 +66,7 @@
 
 /* Styling for milestone filter */
 .milestone-filter {
-  margin-bottom: 20px;
-}
-
-.milestone-filter label {
-  margin-right: 10px;
-}
-
-.milestone-filter select {
-  padding: 5px;
+  margin-right: 15px;
 }
 
 /* General text styling for headings and paragraphs */
@@ -153,4 +145,6 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }

@@ -4,6 +4,8 @@ import "./AdminDashboard.css";
 import { useProject } from "../../../context/ProjectContext";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 interface Material {
   _id: string;
@@ -26,9 +28,24 @@ const AdminDashboard: React.FC = () => {
   const [totalCost, setTotalCost] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [projects, setProjects] = useState<any[]>([]);
   const [selectedMilestone, setSelectedMilestone] = useState<string>("All");
-  const { projectId, projectName } = useProject();
+  const { projectId, projectName, setProjectId, setProjectName } = useProject();
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Fetch projects to populate the dropdown
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("/api/projects");
+        setProjects(response.data);
+      } catch (error) {
+        console.error("Error fetching projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     const fetchMaterialsAndLabour = async () => {
@@ -78,6 +95,16 @@ const AdminDashboard: React.FC = () => {
 
   const handleMilestoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMilestone(e.target.value);
+  };
+
+  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProject = projects.find(
+      (project) => project._id === e.target.value
+    );
+    if (selectedProject) {
+      setProjectId(selectedProject._id);
+      setProjectName(selectedProject.name);
+    }
   };
 
   // Export to Excel functionality
@@ -133,6 +160,60 @@ const AdminDashboard: React.FC = () => {
 
     // Export the workbook
     XLSX.writeFile(workbook, `${projectName}_Costs_Summary.xlsx`);
+  };
+
+  // Export to PDF functionality
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = [
+      "Milestone",
+      "Total Material Cost (KSH)",
+      "Total Labour Cost (KSH)",
+      "Combined Cost (KSH)",
+    ];
+    const tableRows: string[][] = [];
+
+    milestones.forEach((milestone) => {
+      if (selectedMilestone !== "All" && milestone !== selectedMilestone) {
+        return;
+      }
+
+      const { materialCost, labourCost, combinedCost } =
+        calculateCostsByMilestone(milestone);
+
+      const rowData = [
+        milestone,
+        materialCost.toFixed(2),
+        labourCost.toFixed(2),
+        combinedCost.toFixed(2),
+      ];
+      tableRows.push(rowData);
+    });
+
+    const totalMaterialCost = filteredMaterials.reduce(
+      (acc, material) => acc + material.totalPrice,
+      0
+    );
+    const totalLabourCost = filteredLabour.reduce(
+      (acc, labour) => acc + labour.totalPay,
+      0
+    );
+    const totalCombinedCost = totalMaterialCost + totalLabourCost;
+
+    tableRows.push([
+      "Total",
+      totalMaterialCost.toFixed(2),
+      totalLabourCost.toFixed(2),
+      totalCombinedCost.toFixed(2),
+    ]);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      theme: "striped",
+    });
+
+    doc.save(`${projectName}_Costs_Summary.pdf`);
   };
 
   if (!projectId)
@@ -214,29 +295,55 @@ const AdminDashboard: React.FC = () => {
         workers here.
       </p>
 
-      <div className="milestone-filter">
-        <label htmlFor="milestoneFilter">Filter by Milestone:</label>
-        <select
-          id="milestoneFilter"
-          value={selectedMilestone}
-          onChange={handleMilestoneChange}
-        >
-          <option value="All">All</option>
-          {allMilestones.map((milestone, index) => (
-            <option key={index} value={milestone}>
-              {milestone}
-            </option>
-          ))}
-        </select>
-      </div>
+      <div className="project-filters">
+        <div className="milestone-filter">
+          <label htmlFor="milestoneFilter">Filter by Milestone:</label>
+          <select
+            id="milestoneFilter"
+            value={selectedMilestone}
+            onChange={handleMilestoneChange}
+            style={{ width: "140px" }}
+          >
+            <option value="All">All</option>
+            {allMilestones.map((milestone, index) => (
+              <option key={index} value={milestone}>
+                {milestone}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div className="dashboard-export-buttons">
-        <label>Export to: </label>
-        <button className="excel-export-button" onClick={exportToExcel}>
-          <i className="fas fa-file-excel"></i> Excel
-        </button>
+        <div className="project-filter">
+          <label htmlFor="projectFilter">Select Project:</label>
+          <select
+            id="projectFilter"
+            onChange={handleProjectChange}
+            /* style={{ width: "140px" }} */
+          >
+            <option value="">Select a Project</option>
+            {projects.map((project) => (
+              <option key={project._id} value={project._id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-
+      <div className="exporting-options">
+        <div className="dashboard-export-buttons">
+          <label>Export to: </label>
+          <button className="excel-export-button" onClick={exportToExcel}>
+            <i className="fas fa-file-excel"></i> Excel
+          </button>
+        </div>
+        <div className="dashboard-export-buttons">
+          <label>Export to: </label>
+          <button onClick={exportToPDF} className="pdf-button">
+            <i className="fas fa-file-pdf" style={{ marginRight: "8px" }}></i>
+            PDF
+          </button>
+        </div>
+      </div>
       <div className="costs-summary">
         <h2 className="admin-dashboard-h2">Costs Summary by Milestone</h2>
         <div className="table-container">

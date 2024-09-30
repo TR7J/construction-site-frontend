@@ -136,7 +136,7 @@ header {
 }
 
 .excel-export-button {
-  background-color: #217346; /* Excel green color */
+  background-color: #217346;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -155,5 +155,35 @@ header {
 }
 
 .excel-export-button:hover {
-  background-color: #1d5c3a; /* Darker green on hover */
+  background-color: #1d5c3a;
+}
+
+.excel-export-button:active {
+  transform: scale(0.98);
+}
+
+.pdf-button {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.pdf-button:hover {
+  background-color: #b71c1c;
+}
+
+.pdf-button i {
+  font-size: 18px;
+}
+
+.pdf-button:active {
+  transform: scale(0.98);
 }

@@ -153,6 +153,8 @@ const AddMaterials: React.FC = () => {
             <option value="Bags">Bags</option>
             <option value="Feet">Feet</option>
             <option value="KGs">KGs</option>
+            <option value="Wheelbarrows">Wheelbarrows</option>
+            <option value="Litters">Litters</option>
           </select>
         </div>
 

@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { format } from "date-fns";
 import { useProject } from "../../../context/ProjectContext";
 import * as XLSX from "xlsx"; // Importing XLSX for export to Excel
+import jsPDF from "jspdf"; // Importing jsPDF for PDF export
+import "jspdf-autotable"; // Importing autoTable for creating tables in PDF
 import "./ViewMaterials.css";
 
 interface MaterialHistory {
@@ -29,7 +31,8 @@ interface Material {
 }
 
 const ViewMaterials: React.FC = () => {
-  const { projectId } = useProject();
+  const [projects, setProjects] = useState<any[]>([]);
+  const { projectId, setProjectId, setProjectName } = useProject();
   const [materials, setMaterials] = useState<Material[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +55,20 @@ const ViewMaterials: React.FC = () => {
     "Doors",
     "Windows",
   ];
+
+  useEffect(() => {
+    // Fetch projects to populate the dropdown
+    const fetchProjects = async () => {
+      try {
+        const response = await axios.get("/api/projects");
+        setProjects(response.data);
+      } catch (error) {
+        console.error("Error fetching projects", error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -102,6 +119,16 @@ const ViewMaterials: React.FC = () => {
 
   const handleMaterialChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedMaterial(e.target.value);
+  };
+
+  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedProject = projects.find(
+      (project) => project._id === e.target.value
+    );
+    if (selectedProject) {
+      setProjectId(selectedProject._id);
+      setProjectName(selectedProject.name);
+    }
   };
 
   const userMilestones = Array.from(
@@ -184,6 +211,39 @@ const ViewMaterials: React.FC = () => {
     XLSX.writeFile(workbook, "Materials_Report.xlsx");
   };
 
+  // Function to handle export of filtered data to PDF
+  const handlePDFExport = () => {
+    const doc = new jsPDF();
+    doc.autoTable({
+      head: [
+        [
+          "Date",
+          "Name",
+          "Quantity",
+          "Unit Price",
+          "Total Price",
+          "Unit Type",
+          "Milestone",
+        ],
+      ],
+      body: filteredMaterials.map((material) => [
+        format(new Date(material.date), "yyyy-MM-dd"),
+        material.name,
+        material.quantity,
+        material.unitPrice.toFixed(2),
+        (material.unitPrice * material.quantity).toFixed(2),
+        material.unitType,
+        material.milestone,
+      ]),
+    });
+    doc.text(
+      `Total Material Cost: ${totalMaterialCost.toFixed(2)} KSH`,
+      14,
+      doc.lastAutoTable.finalY + 10
+    );
+    doc.save("Materials_Report.pdf");
+  };
+
   if (loading) return <div className="loader">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -243,14 +303,39 @@ const ViewMaterials: React.FC = () => {
                 ))}
               </select>
             </div>
+
+            <div className="project-filter">
+              <label htmlFor="projectFilter">Select Project:</label>
+              <select
+                id="projectFilter"
+                onChange={handleProjectChange}
+                /* style={{ width: "140px" }} */
+              >
+                <option value="">Select a Project</option>
+                {projects.map((project) => (
+                  <option key={project._id} value={project._id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
+        <div className="exporting-options">
+          <div className="export-button-container">
+            <label>Export to: </label>
+            <button className="excel-export-button" onClick={handleExport}>
+              <i className="fas fa-file-excel"></i> Excel
+            </button>
+          </div>
 
-        <div className="export-button-container">
-          <label>Export to: </label>
-          <button className="excel-export-button" onClick={handleExport}>
-            <i className="fas fa-file-excel"></i> Excel
-          </button>
+          <div className="export-button-container">
+            <label>Export to: </label>
+            <button onClick={handlePDFExport} className="pdf-button">
+              <i className="fas fa-file-pdf" style={{ marginRight: "8px" }}></i>
+              PDF
+            </button>
+          </div>
         </div>
         <h2 className="view-materials-h2">Materials</h2>
         <div className="table-container">
@@ -270,7 +355,7 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
-                  <td>{format(new Date(material.date), "PPP")}</td>{" "}
+                  <td>{format(new Date(material.date), "yyyy-MM-dd")}</td>{" "}
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitPrice.toFixed(2)}</td>
