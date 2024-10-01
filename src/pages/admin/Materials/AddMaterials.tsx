@@ -99,7 +99,7 @@ const AddMaterials: React.FC = () => {
       <h2 className="material-management-h2">Manage Materials</h2>
       <form className="material-form" onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="name">Material Name</label>
+          <label htmlFor="name">Material Type</label>
           <input
             type="text"
             id="name"

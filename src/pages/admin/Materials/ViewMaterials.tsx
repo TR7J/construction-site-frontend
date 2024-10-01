@@ -343,12 +343,12 @@ const ViewMaterials: React.FC = () => {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Name</th>
+                <th>Milestone</th>
+                <th>Material Type</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total Price</th>
                 <th>Unit Type</th>
-                <th>Milestone</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -356,12 +356,12 @@ const ViewMaterials: React.FC = () => {
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
                   <td>{format(new Date(material.date), "yyyy-MM-dd")}</td>{" "}
+                  <td>{material.milestone}</td>
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitPrice.toFixed(2)}</td>
                   <td>{(material.unitPrice * material.quantity).toFixed(2)}</td>
                   <td>{material.unitType}</td>
-                  <td>{material.milestone}</td>
                   <td className="edit-delete-btns">
                     <button
                       className="edit-button"
@@ -390,7 +390,7 @@ const ViewMaterials: React.FC = () => {
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Name</th>
+                <th>Material Type</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total Price</th>
