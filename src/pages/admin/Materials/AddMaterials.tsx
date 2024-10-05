@@ -238,7 +238,7 @@ const AddMaterials: React.FC = () => {
             type="text"
             value={material.totalPrice.toFixed(2)}
             className="input-material"
-            readOnly
+            /* readOnly */
           />
         </div>
 
