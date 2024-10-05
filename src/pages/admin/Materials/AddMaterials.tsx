@@ -76,6 +76,7 @@ const AddMaterials: React.FC = () => {
     const materialToSubmit = {
       ...material,
       milestone: useCustomMilestone ? customMilestone : material.milestone,
+      dateAdded: material.dateAdded,
     };
 
     try {
