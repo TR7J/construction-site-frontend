@@ -243,6 +243,8 @@ const AdminDashboard: React.FC = () => {
     "Fittings",
     "Doors",
     "Windows",
+    "Fencing",
+    "Landscaping",
   ];
 
   // Extract unique milestones from the materials list
