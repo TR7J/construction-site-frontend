@@ -496,7 +496,7 @@ const AddLabour: React.FC = () => {
             type="number"
             name="totalPay"
             value={labour.totalPay}
-            /* readOnly */
+            readOnly
             className="input-labour"
           />
         </div>

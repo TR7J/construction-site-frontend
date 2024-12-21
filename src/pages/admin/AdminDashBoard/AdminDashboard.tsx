@@ -359,7 +359,7 @@ const AdminDashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {milestones.map((milestone) => {
+              {allMilestones.map((milestone) => {
                 const { materialCost, labourCost, combinedCost } =
                   calculateCostsByMilestone(milestone);
 
