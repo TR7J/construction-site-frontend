@@ -88,7 +88,7 @@ const Login: React.FC = () => {
           </div>
           {/*  <div className="sign-up-button-div"> */}
           <button type="submit" className="sign-up-button" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            Login
           </button>
           {/*  </div> */}
         </form>
