@@ -129,7 +129,7 @@
 
 @media screen and (max-width: 530px) {
   .sign-up-input {
-    width: 95%;
+    width: 100%;
     min-width: 275px;
     padding: 10px;
     border: 1px solid #d1d5db;
