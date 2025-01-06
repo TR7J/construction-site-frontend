@@ -80,7 +80,6 @@
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  box-sizing: border-box;
 }
 
 .sign-up-group-sign-in {
@@ -161,7 +160,6 @@
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
-    box-sizing: border-box;
   }
 
   .password-toggle {
