@@ -18,7 +18,7 @@ const EditMaterial: React.FC = () => {
   const [customMilestone, setCustomMilestone] = useState<string>(""); // Custom milestone state
   const [isCustomMilestone, setIsCustomMilestone] = useState<boolean>(false); // Track if custom milestone is used
   const [error, setError] = useState<string | null>(null);
-  const [updatedAt, setUpdatedAt] = useState<string>("");
+  const [date, setDate] = useState<string>("");
 
   // Fetch material details when component loads
   useEffect(() => {
@@ -32,9 +32,7 @@ const EditMaterial: React.FC = () => {
         setTotalPrice(material.totalPrice);
         setUnitType(material.unitType);
         setMilestone(material.milestone);
-        setUpdatedAt(
-          material.updatedAt ? format(new Date(material.updatedAt), "PPP") : ""
-        );
+        setDate(material.date ? format(new Date(material.date), "PPP") : "");
 
         if (
           ![
@@ -98,7 +96,7 @@ const EditMaterial: React.FC = () => {
         totalPrice,
         unitType,
         milestone: isCustomMilestone ? customMilestone : milestone,
-        updatedAt: new Date(), // Update date when submitting
+        date,
       });
       toast.success("Material updated successfully!");
       navigate("/supervisor/view-materials");
@@ -191,11 +189,24 @@ const EditMaterial: React.FC = () => {
           )}
         </div>
 
+        <div className="form-group">
+          <label htmlFor="date">Date Added</label>
+          <input
+            type="date"
+            id="date"
+            name="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="input-material"
+            required
+          />
+        </div>
+
         <button type="submit" className="submit-btn">
           Update Material
         </button>
       </form>
-      {updatedAt && <p>Last updated on: {updatedAt}</p>}
+      {date && <p>Last updated on: {date}</p>}
     </div>
   );
 };

@@ -12,7 +12,7 @@ interface Material {
   totalPrice: number;
   unitType: string;
   milestone: string;
-  dateAdded: string; // New dateAdded field
+  date: string; // New date field
 }
 
 const AddMaterials: React.FC = () => {
@@ -24,7 +24,7 @@ const AddMaterials: React.FC = () => {
     totalPrice: 0,
     unitType: "Pieces",
     milestone: "Foundations",
-    dateAdded: "", // Initialize dateAdded
+    date: "", // Initialize date
   });
   const [customMilestone, setCustomMilestone] = useState<string>("");
   const [useCustomMilestone, setUseCustomMilestone] = useState<boolean>(false);
@@ -76,7 +76,7 @@ const AddMaterials: React.FC = () => {
     const materialToSubmit = {
       ...material,
       milestone: useCustomMilestone ? customMilestone : material.milestone,
-      dateAdded: material.dateAdded,
+      date: material.date,
     };
 
     try {
@@ -221,12 +221,12 @@ const AddMaterials: React.FC = () => {
 
         {/* Date Added Field */}
         <div className="form-group">
-          <label htmlFor="dateAdded">Date Added</label>
+          <label htmlFor="date">Date Added</label>
           <input
             type="date"
-            id="dateAdded"
-            name="dateAdded"
-            value={material.dateAdded}
+            id="date"
+            name="date"
+            value={material.date}
             onChange={handleChange}
             className="input-material"
             required

@@ -184,7 +184,7 @@ const ViewMaterials: React.FC = () => {
 
     // Prepare data for export
     const exportData = filteredMaterials.map((material) => ({
-      Date: material.date,
+      Date: format(new Date(material.date), "PPP"),
       Name: material.name,
       Quantity: material.quantity,
       "Unit Price": material.unitPrice.toFixed(2),
@@ -227,7 +227,7 @@ const ViewMaterials: React.FC = () => {
         ],
       ],
       body: filteredMaterials.map((material) => [
-        material.date,
+        format(new Date(material.date), "yyyy-MM-dd"),
         material.name,
         material.quantity,
         material.unitPrice.toFixed(2),
@@ -355,7 +355,8 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
-                  <td>{material.date}</td> <td>{material.milestone}</td>
+                  <td>{format(new Date(material.date), "yyyy-MM-dd")}</td>{" "}
+                  <td>{material.milestone}</td>
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitPrice.toFixed(2)}</td>
@@ -400,7 +401,7 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredHistory.map((entry, index) => (
                 <tr key={index}>
-                  <td>{entry.date}</td>
+                  <td>{format(new Date(entry.date), "yyyy-MM-dd")}</td>
                   <td>{entry.name}</td>
                   <td>{entry.quantity}</td>
                   <td>{entry.unitPrice.toFixed(2)}</td>
