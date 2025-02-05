@@ -22,6 +22,8 @@ interface MaterialHistory {
 interface Material {
   _id: string;
   date: string;
+  createdAt: string;
+  updatedAt: string;
   name: string;
   quantity: number;
   unitPrice: number;
@@ -84,6 +86,9 @@ const ViewMaterials: React.FC = () => {
         const response = await axios.get(
           `/api/supervisor/materials/${projectId}`
         );
+
+        // Debugging: Log the raw dates from the API response
+        console.log("Raw materials from API:", response.data);
         setMaterials(response.data);
       } catch (err) {
         toast.error("Failed to fetch materials.");
@@ -355,7 +360,11 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredMaterials.map((material) => (
                 <tr key={material._id}>
-                  <td>{format(new Date(material.date), "yyyy-MM-dd")}</td>{" "}
+                  <td>
+                    {material.date
+                      ? format(new Date(material.date), "yyyy-MM-dd")
+                      : format(new Date(material.createdAt), "yyyy-MM-dd")}
+                  </td>
                   <td>{material.milestone}</td>
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
@@ -401,7 +410,12 @@ const ViewMaterials: React.FC = () => {
             <tbody>
               {filteredHistory.map((entry, index) => (
                 <tr key={index}>
-                  <td>{format(new Date(entry.date), "yyyy-MM-dd")}</td>
+                  <td>
+                    {" "}
+                    {entry.date
+                      ? format(new Date(entry.date), "yyyy-MM-dd")
+                      : "Invalid Date"}
+                  </td>
                   <td>{entry.name}</td>
                   <td>{entry.quantity}</td>
                   <td>{entry.unitPrice.toFixed(2)}</td>
