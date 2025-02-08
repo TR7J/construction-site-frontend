@@ -46,7 +46,7 @@ const ViewMaterials: React.FC = () => {
     "Foundations",
     "Slab",
     "Walling",
-    "Rinto",
+    "Lintel",
     "Roofing",
     "Plumbing",
     "Electrical works",
@@ -179,6 +179,14 @@ const ViewMaterials: React.FC = () => {
     0
   );
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
   // Function to handle export of filtered data to Excel
   const handleExport = () => {
     // Calculate total cost of filtered materials
@@ -266,7 +274,7 @@ const ViewMaterials: React.FC = () => {
 
       <div className="material-total-cost">
         <h2 className="material-total-cost-h2">
-          Total Material Cost: {totalMaterialCost.toFixed(2)} KSH
+          Total Material Cost: {formatCurrency(totalMaterialCost)}
         </h2>
       </div>
 

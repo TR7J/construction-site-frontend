@@ -195,12 +195,13 @@ const AddMaterials: React.FC = () => {
               <option value="Foundations">Foundations</option>
               <option value="Slab">Slab</option>
               <option value="Walling">Walling</option>
-              <option value="Rinto">Rinto</option>
+              <option value="Lintel">Lintel</option>
               <option value="Roofing">Roofing</option>
               <option value="Plumbing">Plumbing</option>
               <option value="Electrical works">Electrical works</option>
               <option value="Ceiling">Ceiling</option>
               <option value="Plaster">Plaster</option>
+              <option value="Finishing">Finishing</option>
               <option value="Tiling">Tiling</option>
               <option value="Fittings">Fittings</option>
               <option value="Doors">Doors</option>

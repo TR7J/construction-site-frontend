@@ -39,7 +39,7 @@ const EditMaterial: React.FC = () => {
             "Foundations",
             "Slab",
             "Walling",
-            "Rinto",
+            "Lintel",
             "Roofing",
             "Plumbing",
             "Electrical works",
@@ -166,7 +166,7 @@ const EditMaterial: React.FC = () => {
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
             <option value="Walling">Walling</option>
-            <option value="Rinto">Rinto</option>
+            <option value="Lintel">Lintel</option>
             <option value="Roofing">Roofing</option>
             <option value="Plumbing">Plumbing</option>
             <option value="Electrical works">Electrical works</option>

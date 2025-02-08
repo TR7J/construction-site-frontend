@@ -44,13 +44,13 @@ const ViewLabour: React.FC = () => {
     "Foundations",
     "Slab",
     "Walling",
-    "Rinto",
+    "Lintel",
     "Roofing",
     "Plumbing",
     "Electrical works",
     "Roofing",
     "Ceiling",
-    "Pluster",
+    "Plaster",
     "Tiling",
     "Fittings",
     "Doors",
@@ -148,6 +148,14 @@ const ViewLabour: React.FC = () => {
     (acc, labour) => acc + labour.totalPay,
     0
   );
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
 
   // Function to handle export of filtered labour data to Excel
   const handleExport = () => {
@@ -247,7 +255,7 @@ const ViewLabour: React.FC = () => {
 
       <div className="labour-total-cost">
         <h2 className="labour-total-cost-h2">
-          Total Labour Cost: {totalLabourCost.toFixed(2)} KSH
+          Total Labour Cost: {formatCurrency(totalLabourCost)}
         </h2>
       </div>
 

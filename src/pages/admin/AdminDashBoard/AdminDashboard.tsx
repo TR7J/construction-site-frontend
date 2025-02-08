@@ -107,6 +107,14 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
   // Export to Excel functionality
   const exportToExcel = () => {
     // Prepare the data that is displayed in the "Costs Summary by Milestone" table
@@ -233,7 +241,7 @@ const AdminDashboard: React.FC = () => {
     "Foundations",
     "Slab",
     "Walling",
-    "Rinto",
+    "Lintel",
     "Roofing",
     "Plumbing",
     "Electrical works",
@@ -288,7 +296,7 @@ const AdminDashboard: React.FC = () => {
         <h1>Dashboard</h1>
         <div className="total-project-cost">
           <h2>
-            {projectName} Cost: {totalCost.toFixed(2)} KSH
+            {projectName} Cost: {formatCurrency(totalCost)}
           </h2>
         </div>
       </div>
@@ -419,34 +427,34 @@ const AdminDashboard: React.FC = () => {
         <p className="total-cost">
           Total Material Cost:{" "}
           <span className="total-cost-span">
-            {filteredMaterials
-              .reduce((acc, material) => acc + material.totalPrice, 0)
-              .toFixed(2)}{" "}
-            KSH
+            {formatCurrency(
+              filteredMaterials.reduce(
+                (acc, material) => acc + material.totalPrice,
+                0
+              )
+            )}
           </span>
           {selectedMilestone !== "All" && ` for ${selectedMilestone}`}
         </p>
         <p className="total-cost">
           Total Labour Cost:{" "}
           <span className="total-cost-span">
-            {filteredLabour
-              .reduce((acc, labour) => acc + labour.totalPay, 0)
-              .toFixed(2)}{" "}
-            KSH
+            {formatCurrency(
+              filteredLabour.reduce((acc, labour) => acc + labour.totalPay, 0)
+            )}
           </span>
           {selectedMilestone !== "All" && ` for ${selectedMilestone}`}
         </p>
         <p className="total-cost">
           Total Combined Cost:{" "}
           <span className="total-cost-span">
-            {(
+            {formatCurrency(
               filteredMaterials.reduce(
                 (acc, material) => acc + material.totalPrice,
                 0
               ) +
-              filteredLabour.reduce((acc, labour) => acc + labour.totalPay, 0)
-            ).toFixed(2)}{" "}
-            KSH
+                filteredLabour.reduce((acc, labour) => acc + labour.totalPay, 0)
+            )}
           </span>
           {selectedMilestone !== "All" && ` for ${selectedMilestone}`}
         </p>
