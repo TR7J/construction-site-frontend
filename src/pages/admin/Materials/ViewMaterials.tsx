@@ -51,7 +51,7 @@ const ViewMaterials: React.FC = () => {
     "Plumbing",
     "Electrical works",
     "Ceiling",
-    "Pluster",
+    "Plaster",
     "Tiling",
     "Fittings",
     "Doors",
@@ -197,7 +197,9 @@ const ViewMaterials: React.FC = () => {
 
     // Prepare data for export
     const exportData = filteredMaterials.map((material) => ({
-      Date: format(new Date(material.date), "PPP"),
+      Date: material.date
+        ? format(new Date(material.date), "yyyy-MM-dd")
+        : format(new Date(material.updatedAt), "yyyy-MM-dd"),
       Name: material.name,
       Quantity: material.quantity,
       "Unit Price": material.unitPrice.toFixed(2),
@@ -240,7 +242,9 @@ const ViewMaterials: React.FC = () => {
         ],
       ],
       body: filteredMaterials.map((material) => [
-        format(new Date(material.date), "yyyy-MM-dd"),
+        material.date
+          ? format(new Date(material.date), "yyyy-MM-dd")
+          : format(new Date(material.updatedAt), "yyyy-MM-dd"),
         material.name,
         material.quantity,
         material.unitPrice.toFixed(2),
@@ -371,7 +375,7 @@ const ViewMaterials: React.FC = () => {
                   <td>
                     {material.date
                       ? format(new Date(material.date), "yyyy-MM-dd")
-                      : format(new Date(material.createdAt), "yyyy-MM-dd")}
+                      : format(new Date(material.updatedAt), "yyyy-MM-dd")}
                   </td>
                   <td>{material.milestone}</td>
                   <td>{material.name}</td>

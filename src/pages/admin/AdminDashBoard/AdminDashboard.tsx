@@ -246,7 +246,7 @@ const AdminDashboard: React.FC = () => {
     "Plumbing",
     "Electrical works",
     "Ceiling",
-    "Pluster",
+    "Plaster",
     "Tiling",
     "Fittings",
     "Doors",

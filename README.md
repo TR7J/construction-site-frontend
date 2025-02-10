@@ -89,7 +89,7 @@ const predefinedMilestones = [
 "Electrical works",
 "Roofing",
 "Ceiling",
-"Pluster",
+"Plaster",
 "Tiling",
 "Fittings",
 "Doors",
@@ -452,7 +452,7 @@ return (
               <option value="Electrical works">Electrical works</option>
               <option value="Roofing">Roofing</option>
               <option value="Ceiling">Ceiling</option>
-              <option value="Pluster">Pluster</option>
+              <option value="Plaster">Plaster</option>
               <option value="Tiling">Tiling</option>
               <option value="Fittings">Fittings</option>
               <option value="Doors">Doors</option>
@@ -508,6 +508,7 @@ setShowPassword((prevState) => !prevState);
 };
 
 return (
+
 <div className="log-in-page">
 <div className="form-container">
 <h1 className="form-heading">Welcome Back</h1>
