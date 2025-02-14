@@ -235,10 +235,14 @@ const EditLabour: React.FC = () => {
           Milestone:
           <select
             name="milestone"
-            value={formState.milestone}
+            value={formState?.milestone || ""}
             onChange={handleSelectChange}
             disabled={useCustomMilestone}
+            required
           >
+            <option value="" disabled>
+              -- Select Milestone --
+            </option>
             <option value="Foundations">Foundations</option>
             <option value="Slab">Slab</option>
             <option value="Walling">Walling</option>
